@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Proyecto_PWA_Clinica/Proyecto_PWA_Clinica.csproj" />
+  <Project Path="Proyecto_PWA_Clinica_API/Proyecto_PWA_Clinica_API.csproj" />
+</Solution>
