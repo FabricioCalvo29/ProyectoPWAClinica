@@ -24,11 +24,7 @@ namespace Proyecto_PWA_Clinica.Controllers
             if (!ModelState.IsValid)
                 return View(modelo);
 
-            // TODO: aquí validarías credenciales contra BD/servicio.
-            // Por ahora solo ejemplo:
-            // if (!AuthService.Login(modelo.Correo, modelo.Contrasenna)) { ModelState.AddModelError("", "Credenciales inválidas"); return View(modelo); }
-
-            return RedirectToAction("Index"); // o Dashboard cuando exista
+            return RedirectToAction("Index"); 
         }
 
         // REGISTRO
@@ -45,11 +41,6 @@ namespace Proyecto_PWA_Clinica.Controllers
             if (!ModelState.IsValid)
                 return View(modelo);
 
-            // TODO: aquí guardarías el usuario en BD.
-            // Importante: Hashear contraseña antes de guardar.
-            // Ejemplo: UserService.Create(modelo);
-
-            // Al terminar, mandas al login:
             TempData["RegistroOK"] = "Registro exitoso. Ahora puedes iniciar sesión.";
             return RedirectToAction(nameof(IniciarSesion));
         }
