@@ -1,0 +1,84 @@
+﻿@model Proyecto_PWA_Clinica.Models.Usuario
+@{
+    Layout = "_Layout";
+}
+
+<main class="main">
+
+    <div class="page-title">
+        <div class="breadcrumbs">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a asp-controller="Home" asp-action="Index"><i class="bi bi-house"></i> Inicio</a>
+                    </li>
+                    <li class="breadcrumb-item active current">Registro</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="title-wrapper">
+            <h1>Registro</h1>
+            <p>Crea tu cuenta para acceder al portal de pacientes.</p>
+        </div>
+    </div>
+
+    <section id="register" class="login section light-background">
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+            <div class="row justify-content-center">
+                <div class="col-lg-5 col-md-8">
+
+                    <div class="login-box">
+                        <div class="text-center mb-4">
+                            <h3 class="fw-bold text-theme">Crear cuenta</h3>
+                            <p class="text-muted">Completa tus datos</p>
+                        </div>
+
+                        <form asp-action="Registro" asp-controller="Home" method="post" class="php-email-form">
+                            @Html.AntiForgeryToken()
+
+                            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                            <div class="form-floating mb-3">
+                                <input asp-for="Correo" class="form-control" id="floatingEmail" placeholder="nombre@ejemplo.com" />
+                                <label for="floatingEmail">Correo electrónico</label>
+                                <span asp-validation-for="Correo" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input asp-for="Contrasenna" class="form-control" id="floatingPass" placeholder="Contraseña" />
+                                <label for="floatingPass">Contraseña</label>
+                                <span asp-validation-for="Contrasenna" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-4">
+                                <input asp-for="ConfirmarContrasenna" class="form-control" id="floatingPass2" placeholder="Confirmar contraseña" />
+                                <label for="floatingPass2">Confirmar contraseña</label>
+                                <span asp-validation-for="ConfirmarContrasenna" class="text-danger"></span>
+                            </div>
+
+                            <div class="d-grid mb-3">
+                                <button class="btn-login" type="submit">Crear cuenta</button>
+                            </div>
+
+                            <div class="text-center">
+                                <p class="mb-0 small">
+                                    ¿Ya tienes cuenta?
+                                    <a asp-controller="Home" asp-action="IniciarSesion" class="fw-bold text-theme text-decoration-none">
+                                        Inicia sesión aquí
+                                    </a>
+                                </p>
+                            </div>
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

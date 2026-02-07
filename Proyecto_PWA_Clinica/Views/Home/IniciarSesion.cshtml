@@ -9,7 +9,11 @@
         <div class="breadcrumbs">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="bi bi-house"></i> Inicio</a></li>
+                    <li class="breadcrumb-item">
+                        <a asp-controller="Home" asp-action="Index">
+                            <i class="bi bi-house"></i> Inicio
+                        </a>
+                    </li>
                     <li class="breadcrumb-item active current">Iniciar Sesión</li>
                 </ol>
             </nav>
@@ -19,7 +23,9 @@
             <h1>Iniciar Sesión</h1>
             <p>Bienvenido de nuevo. Por favor ingresa tus credenciales para acceder al portal de pacientes.</p>
         </div>
-    </div><section id="login" class="login section light-background">
+    </div>
+
+    <section id="login" class="login section light-background">
 
         <div class="container" data-aos="fade-up" data-aos-delay="100">
 
@@ -58,8 +64,16 @@
                                 <button class="btn-login" type="submit">Entrar</button>
                             </div>
 
+                            <!-- 🔹 ÚNICA ADICIÓN: acceso a Registro -->
                             <div class="text-center">
-                                <p class="mb-0 small">¿No tienes cuenta? <a href="register.html" class="fw-bold text-theme text-decoration-none">Regístrate aquí</a></p>
+                                <p class="mb-0 small">
+                                    ¿No tienes cuenta?
+                                    <a asp-controller="Home"
+                                       asp-action="Registro"
+                                       class="fw-bold text-theme text-decoration-none">
+                                        Regístrate aquí
+                                    </a>
+                                </p>
                             </div>
 
                         </form>
