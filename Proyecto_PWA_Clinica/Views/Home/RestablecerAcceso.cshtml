@@ -1,0 +1,45 @@
+﻿@model Proyecto_PWA_Clinica.Models.RestablecerAccesoViewModel
+@{
+    Layout = "_Layout";
+}
+
+<section class="login section light-background">
+    <div class="container" style="padding-top: 120px; padding-bottom: 60px;">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8">
+                <div class="login-box">
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold text-theme">Restablecer contraseña</h3>
+                        <p class="text-muted">Ingresa tu nueva contraseña.</p>
+                    </div>
+
+                    <form asp-action="RestablecerAcceso" asp-controller="Home" method="post">
+                        @Html.AntiForgeryToken()
+                        <input asp-for="Token" type="hidden" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="NuevaContrasena" class="form-control" placeholder="Nueva contraseña" />
+                            <label asp-for="NuevaContrasena">Nueva contraseña</label>
+                            <span asp-validation-for="NuevaContrasena" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <input asp-for="ConfirmarContrasena" class="form-control" placeholder="Confirmar contraseña" />
+                            <label asp-for="ConfirmarContrasena">Confirmar contraseña</label>
+                            <span asp-validation-for="ConfirmarContrasena" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button class="btn-login" type="submit">Actualizar contraseña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

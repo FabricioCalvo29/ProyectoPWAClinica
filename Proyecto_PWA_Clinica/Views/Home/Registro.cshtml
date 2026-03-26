@@ -1,83 +1,116 @@
 ﻿@model Proyecto_PWA_Clinica.Models.Usuario
+
 @{
     Layout = "_Layout";
 }
 
-<main class="main">
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow p-4">
+                <div class="text-center mb-4">
+                    <h1>Registro</h1>
+                    <p>Crea tu cuenta para acceder al portal de pacientes.</p>
+                </div>
 
-    <div class="page-title">
-        <div class="breadcrumbs">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a asp-controller="Home" asp-action="Index"><i class="bi bi-house"></i> Inicio</a>
-                    </li>
-                    <li class="breadcrumb-item active current">Registro</li>
-                </ol>
-            </nav>
-        </div>
+                <form asp-action="Registro" asp-controller="Home" method="post">
+                    @Html.AntiForgeryToken()
 
-        <div class="title-wrapper">
-            <h1>Registro</h1>
-            <p>Crea tu cuenta para acceder al portal de pacientes.</p>
-        </div>
-    </div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    <section id="register" class="login section light-background">
-        <div class="container" data-aos="fade-up" data-aos-delay="100">
-            <div class="row justify-content-center">
-                <div class="col-lg-5 col-md-8">
-
-                    <div class="login-box">
-                        <div class="text-center mb-4">
-                            <h3 class="fw-bold text-theme">Crear cuenta</h3>
-                            <p class="text-muted">Completa tus datos</p>
+                    @if (ViewBag.MensajeExito != null)
+                    {
+                        <div class="alert alert-success">
+                            @ViewBag.MensajeExito
                         </div>
+                    }
 
-                        <form asp-action="Registro" asp-controller="Home" method="post" class="php-email-form">
-                            @Html.AntiForgeryToken()
+                    @if (ViewBag.MensajeErrorApi != null)
+                    {
+                        <div class="alert alert-danger">
+                            @ViewBag.MensajeErrorApi
+                        </div>
+                    }
 
-                            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                            <div class="form-floating mb-3">
-                                <input asp-for="Correo" class="form-control" id="floatingEmail" placeholder="nombre@ejemplo.com" />
-                                <label for="floatingEmail">Correo electrónico</label>
-                                <span asp-validation-for="Correo" class="text-danger"></span>
-                            </div>
-
-                            <div class="form-floating mb-3">
-                                <input asp-for="Contrasenna" class="form-control" id="floatingPass" placeholder="Contraseña" />
-                                <label for="floatingPass">Contraseña</label>
-                                <span asp-validation-for="Contrasenna" class="text-danger"></span>
-                            </div>
-
-                            <div class="form-floating mb-4">
-                                <input asp-for="ConfirmarContrasenna" class="form-control" id="floatingPass2" placeholder="Confirmar contraseña" />
-                                <label for="floatingPass2">Confirmar contraseña</label>
-                                <span asp-validation-for="ConfirmarContrasenna" class="text-danger"></span>
-                            </div>
-
-                            <div class="d-grid mb-3">
-                                <button class="btn-login" type="submit">Crear cuenta</button>
-                            </div>
-
-                            <div class="text-center">
-                                <p class="mb-0 small">
-                                    ¿Ya tienes cuenta?
-                                    <a asp-controller="Home" asp-action="IniciarSesion" class="fw-bold text-theme text-decoration-none">
-                                        Inicia sesión aquí
-                                    </a>
-                                </p>
-                            </div>
-                        </form>
-
+                    <div class="mb-3">
+                        <label asp-for="Nombre" class="form-label"></label>
+                        <input asp-for="Nombre" class="form-control" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
                     </div>
 
-                </div>
+                    <div class="mb-3">
+                        <label asp-for="Apellido" class="form-label"></label>
+                        <input asp-for="Apellido" class="form-control" />
+                        <span asp-validation-for="Apellido" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Correo" class="form-label"></label>
+                        <input asp-for="Correo" class="form-control" />
+                        <span asp-validation-for="Correo" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Contrasena" class="form-label"></label>
+                        <input asp-for="Contrasena" class="form-control" />
+                        <span asp-validation-for="Contrasena" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ConfirmarContrasena" class="form-label"></label>
+                        <input asp-for="ConfirmarContrasena" class="form-control" />
+                        <span asp-validation-for="ConfirmarContrasena" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="FechaNacimiento" class="form-label"></label>
+                        <input asp-for="FechaNacimiento" type="date" class="form-control" />
+                        <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Telefono" class="form-label"></label>
+                        <input asp-for="Telefono" class="form-control" />
+                        <span asp-validation-for="Telefono" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="TipoSangre" class="form-label"></label>
+                        <select asp-for="TipoSangre" class="form-select">
+                            <option value="">Seleccione una opción</option>
+                            <option>A+</option>
+                            <option>A-</option>
+                            <option>B+</option>
+                            <option>B-</option>
+                            <option>AB+</option>
+                            <option>AB-</option>
+                            <option>O+</option>
+                            <option>O-</option>
+                        </select>
+                        <span asp-validation-for="TipoSangre" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="HistorialMedico" class="form-label"></label>
+                        <textarea asp-for="HistorialMedico" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="HistorialMedico" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary">Crear cuenta</button>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="mb-0">
+                            ¿Ya tienes cuenta?
+                            <a asp-controller="Home" asp-action="IniciarSesion">Inicia sesión aquí</a>
+                        </p>
+                    </div>
+                </form>
             </div>
         </div>
-    </section>
-</main>
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

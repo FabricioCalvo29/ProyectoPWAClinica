@@ -1,0 +1,44 @@
+﻿@model Proyecto_PWA_Clinica.Models.RecuperarAccesoViewModel
+@{
+    Layout = "_Layout";
+}
+
+<section class="login section light-background">
+    <div class="container" style="padding-top: 120px; padding-bottom: 60px;">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8">
+                <div class="login-box">
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold text-theme">Recuperar acceso</h3>
+                        <p class="text-muted">Ingresa tu correo para enviarte el enlace de recuperación.</p>
+                    </div>
+
+                    <form asp-action="RecuperarAcceso" asp-controller="Home" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Correo" class="form-control" placeholder="correo@ejemplo.com" />
+                            <label asp-for="Correo">Correo electrónico</label>
+                            <span asp-validation-for="Correo" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button class="btn-login" type="submit">Enviar enlace</button>
+                        </div>
+
+                        <div class="text-center">
+                            <a asp-action="IniciarSesion" asp-controller="Home" class="text-decoration-none">
+                                Volver al inicio de sesión
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
