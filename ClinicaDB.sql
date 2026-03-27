@@ -864,7 +864,7 @@ BEGIN
 
     IF @@ROWCOUNT = 0
     BEGIN
-        RAISERROR('No se encontr  una credencial activa para el correo indicado.', 16, 1);
+        RAISERROR('No se encontro  una credencial activa para el correo indicado.', 16, 1);
         RETURN;
     END
 END
@@ -902,7 +902,7 @@ BEGIN
 
     IF @@ROWCOUNT = 0
     BEGIN
-        RAISERROR('No se encontr  una credencial activa para actualizar.', 16, 1);
+        RAISERROR('No se encontro  una credencial activa para actualizar.', 16, 1);
         RETURN;
     END
 END
@@ -1168,3 +1168,5 @@ EXEC dbo.IniciarSesion
     @Correo = 'fabricio@gmail.com',
     @Contrasenna = 'HASH123';
 GO
+
+SELECT * FROM tCredencialAcceso;
