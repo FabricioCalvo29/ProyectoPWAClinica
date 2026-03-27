@@ -1,0 +1,81 @@
+@model Proyecto_PWA_Clinica.Models.Cita
+
+@{
+    Layout = "_Layout";
+    var medicos = ViewBag.Medicos as List<Proyecto_PWA_Clinica.Models.MedicoDisponible> ?? new List<Proyecto_PWA_Clinica.Models.MedicoDisponible>();
+    var errorMedicos = ViewBag.ErrorMedicos as string ?? string.Empty;
+}
+
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow p-4">
+                <div class="mb-4">
+                    <h1 class="h3">Agendar cita</h1>
+                    <p class="mb-0">Registra una nueva cita medica.</p>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(errorMedicos))
+                {
+                    <div class="alert alert-danger">
+                        @errorMedicos
+                    </div>
+                }
+
+                @if (!medicos.Any())
+                {
+                    <div class="alert alert-warning">
+                        No hay medicos activos disponibles para agendar citas.
+                    </div>
+                }
+
+                <form asp-action="Create" asp-controller="Citas" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="IdMedico" class="form-label">Medico</label>
+                        <select asp-for="IdMedico" class="form-select">
+                            <option value="0">Seleccione un medico</option>
+                            @foreach (var medico in medicos)
+                            {
+                                <option value="@medico.IdMedico">
+                                    @medico.NombreMedico - @medico.Especialidad
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="IdMedico" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="FechaHora" class="form-label">Fecha y hora</label>
+                        <input asp-for="FechaHora" asp-format="{0:yyyy-MM-ddTHH:mm}" type="datetime-local" step="60" class="form-control" />
+                        <span asp-validation-for="FechaHora" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Motivo" class="form-label">Motivo</label>
+                        <textarea asp-for="Motivo" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="Motivo" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a asp-controller="Citas" asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+                        @if (medicos.Any())
+                        {
+                            <button type="submit" class="btn btn-primary">Guardar cita</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-primary" disabled>Guardar cita</button>
+                        }
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

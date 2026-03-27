@@ -1,0 +1,45 @@
+@model Proyecto_PWA_Clinica.Models.Cita
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow p-4">
+                <div class="mb-4">
+                    <h1 class="h3">Detalle de cita</h1>
+                    <p class="mb-0">Informacion registrada de la cita seleccionada.</p>
+                </div>
+
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Id de cita</dt>
+                    <dd class="col-sm-8">@Model.IdCita</dd>
+
+                    <dt class="col-sm-4">Fecha y hora</dt>
+                    <dd class="col-sm-8">@Model.FechaHora.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                    <dt class="col-sm-4">Medico</dt>
+                    <dd class="col-sm-8">@Model.NombreMedico</dd>
+
+                    <dt class="col-sm-4">Especialidad</dt>
+                    <dd class="col-sm-8">@Model.Especialidad</dd>
+
+                    <dt class="col-sm-4">Estado</dt>
+                    <dd class="col-sm-8">@Model.EstadoCita</dd>
+
+                    <dt class="col-sm-4">Motivo</dt>
+                    <dd class="col-sm-8">@Model.Motivo</dd>
+
+                    <dt class="col-sm-4">Notas del medico</dt>
+                    <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.NotasMedico) ? "Sin notas registradas." : Model.NotasMedico)</dd>
+                </dl>
+
+                <div class="mt-4">
+                    <a asp-controller="Citas" asp-action="Index" class="btn btn-outline-primary">Volver a citas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

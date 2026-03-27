@@ -847,7 +847,7 @@ BEGIN
 END
 GO
 
-ALTER PROCEDURE [dbo].[GuardarTokenRecuperacion]
+CREATE OR ALTER PROCEDURE [dbo].[GuardarTokenRecuperacion]
     @Correo VARCHAR(150),
     @TokenRecuperacion VARCHAR(255),
     @FechaVencimientoToken DATETIME
@@ -864,7 +864,7 @@ BEGIN
 
     IF @@ROWCOUNT = 0
     BEGIN
-        RAISERROR('No se encontró una credencial activa para el correo indicado.', 16, 1);
+        RAISERROR('No se encontr  una credencial activa para el correo indicado.', 16, 1);
         RETURN;
     END
 END
@@ -885,7 +885,7 @@ BEGIN
 END
 GO
 
-ALTER PROCEDURE dbo.ActualizarContrasenna
+CREATE OR ALTER PROCEDURE dbo.ActualizarContrasenna
     @IdCredencial INT,
     @Contrasenna VARCHAR(255)
 AS
@@ -902,7 +902,7 @@ BEGIN
 
     IF @@ROWCOUNT = 0
     BEGIN
-        RAISERROR('No se encontró una credencial activa para actualizar.', 16, 1);
+        RAISERROR('No se encontr  una credencial activa para actualizar.', 16, 1);
         RETURN;
     END
 END
@@ -965,6 +965,186 @@ BEGIN
         FechaActualizacion = GETDATE()
     WHERE IdCredencial = @IdCredencial
       AND IdUsuario = @IdUsuario;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.ConsultarMedicosActivosParaCita
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        M.IdMedico,
+        CONCAT(U.Nombre, ' ', U.Apellido) AS NombreMedico,
+        ISNULL(E.Nombre, 'Sin especialidad') AS Especialidad
+    FROM dbo.tMedico M
+    INNER JOIN dbo.tUsuario U ON M.IdUsuario = U.IdUsuario
+    LEFT JOIN dbo.tEspecialidad E ON M.IdEspecialidad = E.IdEspecialidad
+    WHERE M.Estado = 1
+      AND U.Estado = 1
+    ORDER BY U.Nombre, U.Apellido;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.RegistrarCitaPaciente
+    @IdUsuario INT,
+    @IdMedico INT,
+    @FechaHora DATETIME,
+    @Motivo VARCHAR(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        DECLARE @IdPaciente INT;
+
+        SELECT @IdPaciente = P.IdPaciente
+        FROM dbo.tPaciente P
+        INNER JOIN dbo.tUsuario U ON P.IdUsuario = U.IdUsuario
+        WHERE P.IdUsuario = @IdUsuario
+          AND P.Estado = 1
+          AND U.Estado = 1;
+
+        IF @IdPaciente IS NULL
+        BEGIN
+            RAISERROR('No existe un paciente activo para el usuario indicado.',16,1);
+            RETURN;
+        END
+
+        IF NOT EXISTS
+        (
+            SELECT 1
+            FROM dbo.tMedico M
+            INNER JOIN dbo.tUsuario U ON M.IdUsuario = U.IdUsuario
+            WHERE M.IdMedico = @IdMedico
+              AND M.Estado = 1
+              AND U.Estado = 1
+        )
+        BEGIN
+            RAISERROR('El medico seleccionado no se encuentra disponible.',16,1);
+            RETURN;
+        END
+
+        IF @FechaHora <= GETDATE()
+        BEGIN
+            RAISERROR('La fecha y hora de la cita debe ser futura.',16,1);
+            RETURN;
+        END
+
+        IF EXISTS
+        (
+            SELECT 1
+            FROM dbo.tCita
+            WHERE IdMedico = @IdMedico
+              AND FechaHora = @FechaHora
+              AND EstadoCita = 'Pendiente'
+        )
+        BEGIN
+            RAISERROR('El medico ya tiene una cita pendiente en la fecha y hora indicada.',16,1);
+            RETURN;
+        END
+
+        IF EXISTS
+        (
+            SELECT 1
+            FROM dbo.tCita
+            WHERE IdPaciente = @IdPaciente
+              AND FechaHora = @FechaHora
+              AND EstadoCita = 'Pendiente'
+        )
+        BEGIN
+            RAISERROR('El paciente ya tiene una cita pendiente en la fecha y hora indicada.',16,1);
+            RETURN;
+        END
+
+        INSERT INTO dbo.tCita
+        (
+            IdPaciente,
+            IdMedico,
+            FechaHora,
+            EstadoCita,
+            Motivo,
+            NotasMedico
+        )
+        VALUES
+        (
+            @IdPaciente,
+            @IdMedico,
+            @FechaHora,
+            'Pendiente',
+            @Motivo,
+            NULL
+        );
+
+        SELECT CAST(SCOPE_IDENTITY() AS INT) AS IdCita;
+    END TRY
+    BEGIN CATCH
+        DECLARE @MensajeError VARCHAR(MAX);
+        DECLARE @DetalleError VARCHAR(MAX);
+
+        SET @MensajeError = ERROR_MESSAGE();
+        SET @DetalleError = 'Procedimiento: ' + ISNULL(ERROR_PROCEDURE(),'N/A')
+                          + ' | Linea: ' + CAST(ERROR_LINE() AS VARCHAR(20));
+
+        EXEC dbo.RegistrarError @IdUsuario, 'SP_RegistrarCitaPaciente', @MensajeError, @DetalleError;
+
+        RAISERROR(@MensajeError,16,1);
+    END CATCH
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.ConsultarCitasPaciente
+    @IdUsuario INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        C.IdCita,
+        C.IdPaciente,
+        C.IdMedico,
+        C.FechaHora,
+        C.EstadoCita,
+        C.Motivo,
+        C.NotasMedico,
+        CONCAT(UM.Nombre, ' ', UM.Apellido) AS NombreMedico,
+        E.Nombre AS Especialidad
+    FROM dbo.tCita C
+    INNER JOIN dbo.tPaciente P ON C.IdPaciente = P.IdPaciente
+    INNER JOIN dbo.tMedico M ON C.IdMedico = M.IdMedico
+    INNER JOIN dbo.tUsuario UM ON M.IdUsuario = UM.IdUsuario
+    INNER JOIN dbo.tEspecialidad E ON M.IdEspecialidad = E.IdEspecialidad
+    WHERE P.IdUsuario = @IdUsuario
+      AND P.Estado = 1
+    ORDER BY C.FechaHora DESC;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.ConsultarDetalleCitaPaciente
+    @IdUsuario INT,
+    @IdCita INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT TOP 1
+        C.IdCita,
+        C.IdPaciente,
+        C.IdMedico,
+        C.FechaHora,
+        C.EstadoCita,
+        C.Motivo,
+        C.NotasMedico,
+        CONCAT(UM.Nombre, ' ', UM.Apellido) AS NombreMedico,
+        E.Nombre AS Especialidad
+    FROM dbo.tCita C
+    INNER JOIN dbo.tPaciente P ON C.IdPaciente = P.IdPaciente
+    INNER JOIN dbo.tMedico M ON C.IdMedico = M.IdMedico
+    INNER JOIN dbo.tUsuario UM ON M.IdUsuario = UM.IdUsuario
+    INNER JOIN dbo.tEspecialidad E ON M.IdEspecialidad = E.IdEspecialidad
+    WHERE C.IdCita = @IdCita
+      AND P.IdUsuario = @IdUsuario
+      AND P.Estado = 1;
 END
 GO
 

@@ -7,6 +7,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddSession();
 builder.Services.AddScoped<IUtilitario, Utilitario>();
 builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<CitaService>();
 
 var app = builder.Build();
 
