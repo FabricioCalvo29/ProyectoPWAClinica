@@ -6,8 +6,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 builder.Services.AddSession();
 builder.Services.AddScoped<IUtilitario, Utilitario>();
-builder.Services.AddScoped<UsuarioService>();
-builder.Services.AddScoped<CitaService>();
+builder.Services.AddHttpClient<UsuarioService>();
+builder.Services.AddHttpClient<CitaService>();
+builder.Services.AddHttpClient<TratamientoService>();
+builder.Services.AddHttpClient<DashboardService>();
+builder.Services.AddHttpClient<PacienteService>();
 
 var app = builder.Build();
 

@@ -127,5 +127,36 @@ namespace Proyecto_PWA_Clinica.Services
 
             return respuestaJson;
         }
+
+        public async Task<(bool, string)> CancelarCitaPaciente(int idUsuario, int idCita)
+        {
+            var url = _configuration["Valores:UrlAPI"] + $"Citas/CancelarCitaPaciente/{idUsuario}/{idCita}";
+            var response = await _httpClient.PutAsync(url, null);
+            var respuestaJson = await response.Content.ReadAsStringAsync();
+            var mensaje = ExtraerMensajeRespuesta(respuestaJson);
+            return (response.IsSuccessStatusCode, mensaje);
+        }
+
+        public async Task<(bool, string)> CompletarCita(int idCita)
+        {
+            var url = _configuration["Valores:UrlAPI"] + $"Citas/CompletarCita/{idCita}";
+            var response = await _httpClient.PutAsync(url, null);
+            var respuestaJson = await response.Content.ReadAsStringAsync();
+            var mensaje = ExtraerMensajeRespuesta(respuestaJson);
+            return (response.IsSuccessStatusCode, mensaje);
+        }
+
+        public async Task<List<Cita>> ConsultarTodasLasCitas()
+        {
+            var url = _configuration["Valores:UrlAPI"] + "Citas/ConsultarTodasLasCitas";
+            var response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+                return new List<Cita>();
+
+            var respuestaJson = await response.Content.ReadAsStringAsync();
+            var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            return JsonSerializer.Deserialize<List<Cita>>(respuestaJson, opciones) ?? new List<Cita>();
+        }
     }
 }
