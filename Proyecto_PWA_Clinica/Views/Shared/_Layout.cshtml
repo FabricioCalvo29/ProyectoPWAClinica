@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -63,11 +63,31 @@
 
             <nav id="navmenu" class="navmenu">
                 <ul>
-                    <li><a asp-controller="Home" asp-action="Index" class="active">Inicio</a></li>
-                    <li><a asp-controller="Citas" asp-action="Index">Citas</a></li>
-                    <li><a href="#">Historial Médico</a></li>
-                    <li><a href="#">Pacientes</a></li>
-                    <li><a href="#">Contacto</a></li>
+                    @{
+                        var rolPrincipal = Context.Session.GetString("IdRolPrincipal");
+                        var isLogged = Context.Session.GetString("NombreUsuario") != null;
+                    }
+
+                    @if (isLogged)
+                    {
+                        if (rolPrincipal == "1" || rolPrincipal == "2") // Admin o Superadmin
+                        {
+                            <li><a asp-controller="Home" asp-action="DashboardAdmin" class="active">Panel Admin</a></li>
+                            <li><a asp-controller="Pacientes" asp-action="Index">Pacientes</a></li>
+                            <li><a asp-controller="Citas" asp-action="AdminIndex">Todas las Citas</a></li>
+                        }
+                        else // Paciente 
+                        {
+                            <li><a asp-controller="Home" asp-action="DashboardPaciente" class="active">Mi Panel</a></li>
+                            <li><a asp-controller="Citas" asp-action="Index">Mis Citas</a></li>
+                            <li><a asp-controller="HistorialMedico" asp-action="Index">Historial Médico</a></li>
+                        }
+                    }
+                    else
+                    {
+                        <li><a asp-controller="Home" asp-action="Index" class="active">Inicio</a></li>
+                    }
+                    <li><a href="#contacto">Contacto</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>

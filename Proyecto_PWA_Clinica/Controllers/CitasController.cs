@@ -112,5 +112,36 @@ namespace Proyecto_PWA_Clinica.Controllers
             ViewBag.Medicos = medicos;
             ViewBag.ErrorMedicos = resultado.Item2;
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ValidarSesion]
+        public async Task<IActionResult> Cancelar(int id)
+        {
+            var idUsuario = HttpContext.Session.GetInt32("IdUsuario");
+            if (idUsuario == null)
+                return RedirectToAction("IniciarSesion", "Home");
+
+            var resultado = await _citaService.CancelarCitaPaciente(idUsuario.Value, id);
+
+            if (resultado.Item1)
+                TempData["MensajeExito"] = resultado.Item2;
+            else
+                TempData["MensajeError"] = resultado.Item2;
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [ValidarSesion]
+        public async Task<IActionResult> AdminIndex()
+        {
+            var idRolStr = HttpContext.Session.GetString("IdRolPrincipal");
+            if (idRolStr != "1" && idRolStr != "2")
+                return RedirectToAction("DashboardPaciente", "Home");
+
+            var citas = await _citaService.ConsultarTodasLasCitas();
+            return View(citas);
+        }
     }
 }

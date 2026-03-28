@@ -9,11 +9,22 @@ namespace Proyecto_PWA_Clinica.Controllers
     {
         private readonly UsuarioService _usuarioService;
         private readonly IUtilitario _utilitario;
+        private readonly DashboardService _dashboardService;
+        private readonly CitaService _citaService;
+        private readonly TratamientoService _tratamientoService;
 
-        public HomeController(UsuarioService usuarioService, IUtilitario utilitario)
+        public HomeController(
+            UsuarioService usuarioService, 
+            IUtilitario utilitario,
+            DashboardService dashboardService,
+            CitaService citaService,
+            TratamientoService tratamientoService)
         {
             _usuarioService = usuarioService;
             _utilitario = utilitario;
+            _dashboardService = dashboardService;
+            _citaService = citaService;
+            _tratamientoService = tratamientoService;
         }
         [HttpGet]
         public IActionResult RecuperarAcceso()
@@ -32,7 +43,7 @@ namespace Proyecto_PWA_Clinica.Controllers
 
             if (resultado.Item1)
             {
-                TempData["MensajeExito"] = "Te hemos enviado un correo con las instrucciones para restablecer tu contraseña.";
+                TempData["MensajeExito"] = "Te hemos enviado un correo con las instrucciones para restablecer tu contraseÃ±a.";
                 return RedirectToAction("IniciarSesion");
             }
 
@@ -69,7 +80,7 @@ namespace Proyecto_PWA_Clinica.Controllers
 
             if (resultado.Item1)
             {
-                TempData["MensajeExito"] = "Tu contraseña se actualizó correctamente.";
+                TempData["MensajeExito"] = "Tu contraseÃ±a se actualizÃ³ correctamente.";
                 return RedirectToAction("IniciarSesion");
             }
 
@@ -96,7 +107,7 @@ namespace Proyecto_PWA_Clinica.Controllers
         {
             if (string.IsNullOrWhiteSpace(model.Correo) || string.IsNullOrWhiteSpace(model.Contrasena))
             {
-                ModelState.AddModelError("", "Debe ingresar correo y contraseña.");
+                ModelState.AddModelError("", "Debe ingresar correo y contraseÃ±a.");
                 return View(model);
             }
 
@@ -168,18 +179,33 @@ namespace Proyecto_PWA_Clinica.Controllers
 
         [HttpGet]
         [ValidarSesion]
-        public IActionResult DashboardPaciente()
+        public async Task<IActionResult> DashboardPaciente()
         {
+            var idUsuarioStr = HttpContext.Session.GetString("IdUsuario");
+            if (!int.TryParse(idUsuarioStr, out int idUsuario))
+                return RedirectToAction("IniciarSesion");
+
+            var estadisticas = await _dashboardService.ConsultarEstadisticasPaciente(idUsuario);
+            var citas = await _citaService.ConsultarCitasPaciente(idUsuario);
+            var tratamientos = await _tratamientoService.ConsultarTratamientosPaciente(idUsuario);
+
             ViewBag.NombreUsuario = HttpContext.Session.GetString("NombreUsuario");
-            return View();
+            ViewBag.Citas = citas;
+            ViewBag.Tratamientos = tratamientos;
+
+            return View(estadisticas);
         }
 
-        [HttpGet]
         [ValidarSesion]
-        public IActionResult DashboardAdmin()
+        public async Task<IActionResult> DashboardAdmin()
         {
+            var estadisticas = await _dashboardService.ConsultarEstadisticasAdmin();
+            var citas = await _citaService.ConsultarTodasLasCitas();
+
             ViewBag.NombreUsuario = HttpContext.Session.GetString("NombreUsuario");
-            return View();
+            ViewBag.Citas = citas;
+
+            return View(estadisticas);
         }
 
         [HttpGet]
