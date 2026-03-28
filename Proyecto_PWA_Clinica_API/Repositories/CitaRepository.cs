@@ -118,5 +118,60 @@ namespace Proyecto_PWA_Clinica_API.Repositories
                 );
             }
         }
+
+        public async Task<RespuestaApi> CancelarCitaPaciente(int idUsuario, int idCita)
+        {
+            try
+            {
+                using IDbConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+                var parametros = new DynamicParameters();
+                parametros.Add("@IdUsuario", idUsuario);
+                parametros.Add("@IdCita", idCita);
+
+                await db.ExecuteAsync(
+                    "dbo.CancelarCitaPaciente",
+                    parametros,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                return new RespuestaApi { EsCorrecto = true, Mensaje = "Cita cancelada correctamente." };
+            }
+            catch (Exception ex)
+            {
+                return new RespuestaApi { EsCorrecto = false, Mensaje = ex.Message };
+            }
+        }
+
+        public async Task<RespuestaApi> CompletarCita(int idCita)
+        {
+            try
+            {
+                using IDbConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+                var parametros = new DynamicParameters();
+                parametros.Add("@IdCita", idCita);
+
+                await db.ExecuteAsync(
+                    "dbo.CompletarCita",
+                    parametros,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                return new RespuestaApi { EsCorrecto = true, Mensaje = "Cita marcada como completada." };
+            }
+            catch (Exception ex)
+            {
+                return new RespuestaApi { EsCorrecto = false, Mensaje = ex.Message };
+            }
+        }
+
+        public async Task<IEnumerable<CitaDto>> ConsultarTodasLasCitas()
+        {
+            using IDbConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return await db.QueryAsync<CitaDto>(
+                "dbo.ConsultarTodasLasCitas",
+                commandType: CommandType.StoredProcedure
+            );
+        }
     }
 }

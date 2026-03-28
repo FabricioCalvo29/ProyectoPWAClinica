@@ -1,6 +1,6 @@
-namespace Proyecto_PWA_Clinica.Models
+namespace Proyecto_PWA_Clinica_API.Models
 {
-    public class Paciente
+    public class PacienteListaDto
     {
         public int IdPaciente { get; set; }
         public int IdUsuario { get; set; }

@@ -8,5 +8,8 @@ namespace Proyecto_PWA_Clinica_API.Repositories
         Task<RespuestaApi> RegistrarCitaPaciente(RegistrarCitaDto model);
         Task<IEnumerable<CitaDto>> ConsultarCitasPaciente(int idUsuario);
         Task<CitaDto?> ConsultarDetalleCitaPaciente(int idUsuario, int idCita);
+        Task<RespuestaApi> CancelarCitaPaciente(int idUsuario, int idCita);
+        Task<RespuestaApi> CompletarCita(int idCita);
+        Task<IEnumerable<CitaDto>> ConsultarTodasLasCitas();
     }
 }

@@ -12,6 +12,9 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ICitaRepository, CitaRepository>();
+builder.Services.AddScoped<ITratamientoRepository, TratamientoRepository>();
+builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
+builder.Services.AddScoped<IPacienteRepository, PacienteRepository>();
 builder.Services.AddScoped<IUtilitario, Utilitario>();
 
 // JWT

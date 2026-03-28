@@ -118,5 +118,43 @@ namespace Proyecto_PWA_Clinica_API.Controllers
                 });
             }
         }
+
+        [HttpPut("CancelarCitaPaciente/{idUsuario:int}/{idCita:int}")]
+        public async Task<IActionResult> CancelarCitaPaciente(int idUsuario, int idCita)
+        {
+            var respuesta = await _citaRepository.CancelarCitaPaciente(idUsuario, idCita);
+            if (respuesta.EsCorrecto)
+                return Ok(respuesta);
+
+            return BadRequest(respuesta);
+        }
+
+        [HttpPut("CompletarCita/{idCita:int}")]
+        public async Task<IActionResult> CompletarCita(int idCita)
+        {
+            var respuesta = await _citaRepository.CompletarCita(idCita);
+            if (respuesta.EsCorrecto)
+                return Ok(respuesta);
+
+            return BadRequest(respuesta);
+        }
+
+        [HttpGet("ConsultarTodasLasCitas")]
+        public async Task<IActionResult> ConsultarTodasLasCitas()
+        {
+            try
+            {
+                var citas = await _citaRepository.ConsultarTodasLasCitas();
+                return Ok(citas);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new RespuestaApi
+                {
+                    EsCorrecto = false,
+                    Mensaje = ex.Message
+                });
+            }
+        }
     }
 }
