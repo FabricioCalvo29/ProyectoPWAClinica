@@ -1170,3 +1170,171 @@ EXEC dbo.IniciarSesion
 GO
 
 SELECT * FROM tCredencialAcceso;
+
+-- =============================================
+-- FASE 1: NUEVOS PROCEDIMIENTOS ALMACENADOS
+-- =============================================
+
+GO
+
+CREATE OR ALTER PROCEDURE dbo.CancelarCitaPaciente
+    @IdUsuario INT,
+    @IdCita INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @IdPaciente INT;
+    SELECT @IdPaciente = IdPaciente FROM tPaciente WHERE IdUsuario = @IdUsuario;
+
+    IF EXISTS (SELECT 1 FROM tCitas WHERE IdCita = @IdCita AND IdPaciente = @IdPaciente AND EstadoCita = 'Pendiente')
+    BEGIN
+        UPDATE tCitas SET EstadoCita = 'Cancelada' WHERE IdCita = @IdCita;
+    END
+    ELSE
+    BEGIN
+        THROW 50001, 'La cita no existe, ya fue cancelada, o no te pertenece.', 1;
+    END
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.CompletarCita
+    @IdCita INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE tCitas SET EstadoCita = 'Completada' WHERE IdCita = @IdCita;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.RegistrarTratamiento
+    @IdCita INT,
+    @Medicamento NVARCHAR(100),
+    @Dosis NVARCHAR(100),
+    @Duracion NVARCHAR(100),
+    @Instrucciones NVARCHAR(MAX)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    INSERT INTO tTratamiento (IdCita, Medicamento, Dosis, Duracion, Instrucciones)
+    VALUES (@IdCita, @Medicamento, @Dosis, @Duracion, @Instrucciones);
+    
+    SELECT SCOPE_IDENTITY() as IdGenerado;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.ConsultarTratamientosPorCita
+    @IdCita INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT IdTratamiento, IdCita, Medicamento, Dosis, Duracion, Instrucciones
+    FROM tTratamiento
+    WHERE IdCita = @IdCita;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.ConsultarTratamientosPaciente
+    @IdUsuario INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @IdPaciente INT;
+    SELECT @IdPaciente = IdPaciente FROM tPaciente WHERE IdUsuario = @IdUsuario;
+
+    SELECT t.IdTratamiento, t.IdCita, t.Medicamento, t.Dosis, t.Duracion, t.Instrucciones
+    FROM tTratamiento t
+    INNER JOIN tCitas c ON t.IdCita = c.IdCita
+    WHERE c.IdPaciente = @IdPaciente
+    ORDER BY c.FechaHora DESC;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.ConsultarEstadisticasAdmin
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT 
+        (SELECT COUNT(*) FROM tUsuario) as TotalUsuarios,
+        (SELECT COUNT(*) FROM tCitas WHERE EstadoCita = 'Pendiente') as CitasPendientes,
+        (SELECT COUNT(*) FROM tCitas WHERE EstadoCita = 'Completada') as CitasCompletadas,
+        (SELECT COUNT(*) FROM tCitas WHERE CAST(FechaHora as DATE) = CAST(GETDATE() as DATE)) as CitasHoy
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.ConsultarEstadisticasPaciente
+    @IdUsuario INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @IdPaciente INT;
+    SELECT @IdPaciente = IdPaciente FROM tPaciente WHERE IdUsuario = @IdUsuario;
+
+    SELECT 
+        (SELECT COUNT(*) FROM tCitas WHERE IdPaciente = @IdPaciente AND EstadoCita = 'Pendiente') as CitasPendientes,
+        (SELECT COUNT(*) FROM tCitas WHERE IdPaciente = @IdPaciente AND EstadoCita = 'Completada') as CitasCompletadas,
+        (SELECT COUNT(*) FROM tCitas WHERE IdPaciente = @IdPaciente AND EstadoCita = 'Cancelada') as CitasCanceladas,
+        (SELECT COUNT(*) FROM tTratamiento t INNER JOIN tCitas c ON t.IdCita = c.IdCita WHERE c.IdPaciente = @IdPaciente) as TotalTratamientos
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.ConsultarTodosLosPacientes
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT 
+        p.IdPaciente, 
+        u.IdUsuario, 
+        u.Nombre + ' ' + u.Apellido as NombreCompleto, 
+        c.Correo, 
+        u.Telefono, 
+        u.TipoSangre, 
+        u.EstadoUsuario as Estado
+    FROM tPaciente p
+    INNER JOIN tUsuario u ON p.IdUsuario = u.IdUsuario
+    INNER JOIN tCredenciales c ON c.IdUsuario = u.IdUsuario;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.ConsultarDetallePaciente
+    @IdPaciente INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT 
+        p.IdPaciente, 
+        u.IdUsuario, 
+        u.Nombre + ' ' + u.Apellido as NombreCompleto, 
+        c.Correo, 
+        u.Telefono, 
+        u.TipoSangre, 
+        u.EstadoUsuario as Estado
+    FROM tPaciente p
+    INNER JOIN tUsuario u ON p.IdUsuario = u.IdUsuario
+    INNER JOIN tCredenciales c ON c.IdUsuario = u.IdUsuario
+    WHERE p.IdPaciente = @IdPaciente;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.ConsultarTodasLasCitas
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT 
+        c.IdCita,
+        c.IdPaciente,
+        c.IdMedico,
+        c.FechaHora,
+        c.EstadoCita,
+        c.Motivo,
+        c.NotasMedico,
+        (u.Nombre + ' ' + u.Apellido) as NombreMedico,
+        m.Especialidad
+    FROM tCitas c
+    INNER JOIN tMedico m ON c.IdMedico = m.IdMedico
+    INNER JOIN tUsuario u ON m.IdUsuario = u.IdUsuario
+    ORDER BY c.FechaHora DESC;
+END
+GO
