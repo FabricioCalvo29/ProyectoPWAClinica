@@ -14,7 +14,7 @@ namespace Proyecto_PWA_Clinica.Controllers
         private readonly TratamientoService _tratamientoService;
 
         public HomeController(
-            UsuarioService usuarioService, 
+            UsuarioService usuarioService,
             IUtilitario utilitario,
             DashboardService dashboardService,
             CitaService citaService,
@@ -25,67 +25,6 @@ namespace Proyecto_PWA_Clinica.Controllers
             _dashboardService = dashboardService;
             _citaService = citaService;
             _tratamientoService = tratamientoService;
-        }
-        [HttpGet]
-        public IActionResult RecuperarAcceso()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RecuperarAcceso(RecuperarAccesoViewModel model)
-        {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var resultado = await _usuarioService.RecuperarAcceso(model.Correo);
-
-            if (resultado.Item1)
-            {
-                TempData["MensajeExito"] = "Te hemos enviado un correo con las instrucciones para restablecer tu contraseña.";
-                return RedirectToAction("IniciarSesion");
-            }
-
-            ModelState.AddModelError("", resultado.Item2);
-            return View(model);
-        }
-
-        [HttpGet]
-        public IActionResult RestablecerAcceso(string token)
-        {
-            if (string.IsNullOrWhiteSpace(token))
-                return RedirectToAction("IniciarSesion");
-
-            var model = new RestablecerAccesoViewModel
-            {
-                Token = token
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RestablecerAcceso(RestablecerAccesoViewModel model)
-        {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var resultado = await _usuarioService.RestablecerAcceso(
-                model.Token,
-                model.NuevaContrasena,
-                model.ConfirmarContrasena
-            );
-
-            if (resultado.Item1)
-            {
-                TempData["MensajeExito"] = "Tu contraseña se actualizó correctamente.";
-                return RedirectToAction("IniciarSesion");
-            }
-
-            ModelState.AddModelError("", resultado.Item2);
-            return View(model);
         }
 
         [HttpGet]
@@ -99,8 +38,6 @@ namespace Proyecto_PWA_Clinica.Controllers
         {
             return View();
         }
-
-
 
         [HttpPost]
         public async Task<IActionResult> IniciarSesion(Usuario model)
@@ -138,6 +75,49 @@ namespace Proyecto_PWA_Clinica.Controllers
             return View(model);
         }
 
+        // 🔥 FIX AQUÍ
+        [HttpGet]
+        [ValidarSesion]
+        public async Task<IActionResult> DashboardPaciente()
+        {
+            var idUsuario = HttpContext.Session.GetInt32("IdUsuario");
+
+            if (idUsuario == null)
+                return RedirectToAction("IniciarSesion");
+
+            var estadisticas = await _dashboardService.ConsultarEstadisticasPaciente(idUsuario.Value);
+            var citas = await _citaService.ConsultarCitasPaciente(idUsuario.Value);
+            var tratamientos = await _tratamientoService.ConsultarTratamientosPaciente(idUsuario.Value);
+
+            ViewBag.NombreUsuario = HttpContext.Session.GetString("NombreUsuario");
+            ViewBag.Citas = citas;
+            ViewBag.Tratamientos = tratamientos;
+
+            return View(estadisticas);
+        }
+
+        [HttpGet]
+        [ValidarSesion]
+        public IActionResult Dashboard()
+        {
+            ViewBag.NombreUsuario = HttpContext.Session.GetString("NombreUsuario");
+            ViewBag.CorreoUsuario = HttpContext.Session.GetString("CorreoUsuario");
+            return View();
+        }
+
+        [HttpGet]
+        [ValidarSesion]
+        public async Task<IActionResult> DashboardAdmin()
+        {
+            var estadisticas = await _dashboardService.ConsultarEstadisticasAdmin();
+            var citas = await _citaService.ConsultarTodasLasCitas();
+
+            ViewBag.NombreUsuario = HttpContext.Session.GetString("NombreUsuario");
+            ViewBag.Citas = citas;
+
+            return View(estadisticas);
+        }
+
         [HttpGet]
         public IActionResult Registro()
         {
@@ -149,9 +129,7 @@ namespace Proyecto_PWA_Clinica.Controllers
         public async Task<IActionResult> Registro(Usuario model)
         {
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
 
             model.Contrasena = _utilitario.Encrypt(model.Contrasena);
 
@@ -166,46 +144,6 @@ namespace Proyecto_PWA_Clinica.Controllers
             ModelState.AddModelError("", "No fue posible registrar el usuario.");
             ViewBag.MensajeErrorApi = resultado.Item2;
             return View(model);
-        }
-
-        [HttpGet]
-        [ValidarSesion]
-        public IActionResult Dashboard()
-        {
-            ViewBag.NombreUsuario = HttpContext.Session.GetString("NombreUsuario");
-            ViewBag.CorreoUsuario = HttpContext.Session.GetString("CorreoUsuario");
-            return View();
-        }
-
-        [HttpGet]
-        [ValidarSesion]
-        public async Task<IActionResult> DashboardPaciente()
-        {
-            var idUsuarioStr = HttpContext.Session.GetString("IdUsuario");
-            if (!int.TryParse(idUsuarioStr, out int idUsuario))
-                return RedirectToAction("IniciarSesion");
-
-            var estadisticas = await _dashboardService.ConsultarEstadisticasPaciente(idUsuario);
-            var citas = await _citaService.ConsultarCitasPaciente(idUsuario);
-            var tratamientos = await _tratamientoService.ConsultarTratamientosPaciente(idUsuario);
-
-            ViewBag.NombreUsuario = HttpContext.Session.GetString("NombreUsuario");
-            ViewBag.Citas = citas;
-            ViewBag.Tratamientos = tratamientos;
-
-            return View(estadisticas);
-        }
-
-        [ValidarSesion]
-        public async Task<IActionResult> DashboardAdmin()
-        {
-            var estadisticas = await _dashboardService.ConsultarEstadisticasAdmin();
-            var citas = await _citaService.ConsultarTodasLasCitas();
-
-            ViewBag.NombreUsuario = HttpContext.Session.GetString("NombreUsuario");
-            ViewBag.Citas = citas;
-
-            return View(estadisticas);
         }
 
         [HttpGet]
