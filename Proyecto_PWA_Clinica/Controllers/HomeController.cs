@@ -75,7 +75,68 @@ namespace Proyecto_PWA_Clinica.Controllers
             return View(model);
         }
 
-        // 🔥 FIX AQUÍ
+        [HttpGet]
+        public IActionResult RecuperarAcceso()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecuperarAcceso(RecuperarAccesoViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var resultado = await _usuarioService.RecuperarAcceso(model.Correo);
+
+            if (resultado.Item1)
+            {
+                TempData["MensajeExito"] = "Te hemos enviado un correo con las instrucciones para restablecer tu contraseña.";
+                return RedirectToAction("IniciarSesion");
+            }
+
+            ModelState.AddModelError("", resultado.Item2);
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult RestablecerAcceso(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+                return RedirectToAction("IniciarSesion");
+
+            var model = new RestablecerAccesoViewModel
+            {
+                Token = token
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestablecerAcceso(RestablecerAccesoViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var resultado = await _usuarioService.RestablecerAcceso(
+                model.Token,
+                model.NuevaContrasena,
+                model.ConfirmarContrasena
+            );
+
+            if (resultado.Item1)
+            {
+                TempData["MensajeExito"] = "Tu contraseña se actualizó correctamente.";
+                return RedirectToAction("IniciarSesion");
+            }
+
+            ModelState.AddModelError("", resultado.Item2);
+            return View(model);
+        }
+
         [HttpGet]
         [ValidarSesion]
         public async Task<IActionResult> DashboardPaciente()
