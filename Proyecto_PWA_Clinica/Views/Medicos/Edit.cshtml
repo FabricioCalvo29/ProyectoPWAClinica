@@ -1,0 +1,65 @@
+﻿@model Proyecto_PWA_Clinica.Models.RegistrarMedicoViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<section class="section" style="padding-top: 120px;">
+    <div class="container">
+        <div class="mb-4">
+            <h2 class="fw-bold">Editar Médico</h2>
+            <p class="text-muted mb-0">Actualiza la información general del médico.</p>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <input asp-for="IdMedico" type="hidden" />
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Nombre" class="form-label"></label>
+                            <input asp-for="Nombre" class="form-control" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Apellido" class="form-label"></label>
+                            <input asp-for="Apellido" class="form-control" />
+                            <span asp-validation-for="Apellido" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Correo" class="form-label">Correo institucional</label>
+                            <input asp-for="Correo" class="form-control" />
+                            <span asp-validation-for="Correo" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="IdEspecialidad" class="form-label"></label>
+                            <select asp-for="IdEspecialidad" asp-items="ViewBag.Especialidades" class="form-select">
+                                <option value="">Seleccione una especialidad</option>
+                            </select>
+                            <span asp-validation-for="IdEspecialidad" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CodigoProfesional" class="form-label">Código profesional</label>
+                            <input asp-for="CodigoProfesional" class="form-control" readonly />
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">Guardar cambios</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<partial name="_ValidationScriptsPartial" />

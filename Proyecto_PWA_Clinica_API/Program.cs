@@ -16,6 +16,7 @@ builder.Services.AddScoped<ITratamientoRepository, TratamientoRepository>();
 builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
 builder.Services.AddScoped<IPacienteRepository, PacienteRepository>();
 builder.Services.AddScoped<IUtilitario, Utilitario>();
+builder.Services.AddScoped<IMedicoRepository, MedicoRepository>();
 
 // JWT
 var jwtKey = builder.Configuration["Jwt:Key"]

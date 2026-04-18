@@ -11,6 +11,7 @@ builder.Services.AddHttpClient<CitaService>();
 builder.Services.AddHttpClient<TratamientoService>();
 builder.Services.AddHttpClient<DashboardService>();
 builder.Services.AddHttpClient<PacienteService>();
+builder.Services.AddHttpClient<MedicoService>();
 
 var app = builder.Build();
 
