@@ -1,0 +1,140 @@
+﻿@model List<Proyecto_PWA_Clinica.Models.Cita>
+
+@{
+    Layout = "_Layout";
+}
+
+<section class="section" style="padding-top: 120px;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold">Mis Citas</h2>
+                <p class="text-muted mb-0">Listado de citas asignadas al médico</p>
+            </div>
+            <a asp-controller="Home" asp-action="DashboardMedico" class="btn btn-outline-secondary rounded-pill">
+                Volver al Panel
+            </a>
+        </div>
+
+        @if (TempData["MensajeExito"] != null)
+        {
+            <div class="alert alert-success">@TempData["MensajeExito"]</div>
+        }
+
+        @if (TempData["MensajeError"] != null)
+        {
+            <div class="alert alert-danger">@TempData["MensajeError"]</div>
+        }
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <form method="get" asp-action="MedicoIndex" class="row g-3 align-items-end">
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Nombre del paciente</label>
+                        <input type="text"
+                               name="nombrePaciente"
+                               value="@ViewBag.NombrePaciente"
+                               class="form-control"
+                               placeholder="Buscar por nombre" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label fw-semibold">Estado</label>
+                        <select name="estadoCita" class="form-select">
+                            <option value="" selected="@(string.IsNullOrEmpty((string?)ViewBag.EstadoCita))">Todos</option>
+                            <option value="Pendiente" selected="@((string?)ViewBag.EstadoCita == "Pendiente")">Pendiente</option>
+                            <option value="Completada" selected="@((string?)ViewBag.EstadoCita == "Completada")">Completada</option>
+                            <option value="Cancelada" selected="@((string?)ViewBag.EstadoCita == "Cancelada")">Cancelada</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label fw-semibold">Desde</label>
+                        <input type="date"
+                               name="fechaDesde"
+                               value="@ViewBag.FechaDesde"
+                               class="form-control" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label fw-semibold">Hasta</label>
+                        <input type="date"
+                               name="fechaHasta"
+                               value="@ViewBag.FechaHasta"
+                               class="form-control" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label fw-semibold">Orden</label>
+                        <select name="orden" class="form-select">
+                            <option value="asc" selected="@((string?)ViewBag.Orden == "asc")">Más próxima</option>
+                            <option value="desc" selected="@((string?)ViewBag.Orden == "desc")">Más reciente</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-1 d-grid">
+                        <button type="submit" class="btn btn-primary rounded-pill">
+                            Ir
+                        </button>
+                    </div>
+
+                    <div class="col-12 text-end">
+                        <a asp-action="MedicoIndex" class="btn btn-outline-secondary rounded-pill">
+                            Limpiar filtros
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                @if (Model != null && Model.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Paciente</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Motivo</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cita in Model)
+                                {
+                                    <tr>
+                                        <td>@cita.NombrePaciente</td>
+                                        <td>@cita.FechaHora.ToString("dd/MM/yyyy")</td>
+                                        <td>@cita.FechaHora.ToString("HH:mm")</td>
+                                        <td>@cita.Motivo</td>
+                                        <td>
+                                            <span class="badge @(cita.EstadoCita == "Pendiente" ? "bg-warning text-dark" : cita.EstadoCita == "Completada" ? "bg-success" : "bg-danger")">
+                                                @cita.EstadoCita
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a asp-action="MedicoDetails" asp-route-id="@cita.IdCita" class="btn btn-sm btn-primary rounded-pill">
+                                                Ver detalle
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted p-4">
+                        No hay citas que coincidan con los filtros seleccionados.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>

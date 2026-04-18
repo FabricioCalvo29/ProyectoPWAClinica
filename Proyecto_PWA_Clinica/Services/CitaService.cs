@@ -158,5 +158,32 @@ namespace Proyecto_PWA_Clinica.Services
             var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             return JsonSerializer.Deserialize<List<Cita>>(respuestaJson, opciones) ?? new List<Cita>();
         }
+        public async Task<List<Cita>> ConsultarCitasMedico(int idUsuario)
+        {
+            var url = _configuration["Valores:UrlAPI"] + $"Citas/ConsultarCitasMedico/{idUsuario}";
+            var response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+                return new List<Cita>();
+
+            var respuestaJson = await response.Content.ReadAsStringAsync();
+            var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            return JsonSerializer.Deserialize<List<Cita>>(respuestaJson, opciones) ?? new List<Cita>();
+        }
+
+        public async Task<Cita?> ConsultarDetalleCitaMedico(int idUsuario, int idCita)
+        {
+            var url = _configuration["Valores:UrlAPI"] + $"Citas/ConsultarDetalleCitaMedico/{idUsuario}/{idCita}";
+            var response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var respuestaJson = await response.Content.ReadAsStringAsync();
+            var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            return JsonSerializer.Deserialize<Cita>(respuestaJson, opciones);
+        }
     }
 }

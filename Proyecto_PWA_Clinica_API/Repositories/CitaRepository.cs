@@ -173,5 +173,36 @@ namespace Proyecto_PWA_Clinica_API.Repositories
                 commandType: CommandType.StoredProcedure
             );
         }
+        public async Task<IEnumerable<CitaDto>> ConsultarCitasMedico(int idUsuario)
+        {
+            using IDbConnection db = new SqlConnection(
+                _configuration.GetConnectionString("DefaultConnection"));
+
+            var parametros = new DynamicParameters();
+            parametros.Add("@IdUsuario", idUsuario);
+
+            return await db.QueryAsync<CitaDto>(
+                "dbo.ConsultarCitasMedico",
+                parametros,
+                commandType: CommandType.StoredProcedure
+            );
+        }
+
+        public async Task<CitaDto?> ConsultarDetalleCitaMedico(int idUsuario, int idCita)
+        {
+            using IDbConnection db = new SqlConnection(
+                _configuration.GetConnectionString("DefaultConnection"));
+
+            var parametros = new DynamicParameters();
+            parametros.Add("@IdUsuario", idUsuario);
+            parametros.Add("@IdCita", idCita);
+
+            return await db.QueryFirstOrDefaultAsync<CitaDto>(
+                "dbo.ConsultarDetalleCitaMedico",
+                parametros,
+                commandType: CommandType.StoredProcedure
+            );
+        }
+
     }
 }

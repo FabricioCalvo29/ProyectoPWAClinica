@@ -44,5 +44,18 @@ namespace Proyecto_PWA_Clinica_API.Controllers
                 return StatusCode(500, new RespuestaApi { EsCorrecto = false, Mensaje = ex.Message });
             }
         }
+        [HttpGet("EstadisticasMedico/{idUsuario:int}")]
+        public async Task<IActionResult> EstadisticasMedico(int idUsuario)
+        {
+            try
+            {
+                var stats = await _dashboardRepository.ConsultarEstadisticasMedico(idUsuario);
+                return Ok(stats);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new RespuestaApi { EsCorrecto = false, Mensaje = ex.Message });
+            }
+        }
     }
 }

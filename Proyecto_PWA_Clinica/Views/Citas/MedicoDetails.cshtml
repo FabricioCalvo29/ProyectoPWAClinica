@@ -1,0 +1,209 @@
+﻿@model Proyecto_PWA_Clinica.Models.Cita
+
+@{
+    Layout = "_Layout";
+    var tratamientos = ViewBag.Tratamientos as List<Proyecto_PWA_Clinica.Models.Tratamiento> ?? new();
+}
+
+<section class="section" style="padding-top: 120px; padding-bottom: 60px;">
+    <div class="container" data-aos="fade-up">
+
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+                <h2 class="fw-bold mb-1">Detalle de Cita</h2>
+                <p class="text-muted mb-0">Atención médica y registro de tratamiento</p>
+            </div>
+
+            <a asp-action="MedicoIndex" class="btn btn-outline-secondary rounded-pill px-4">
+                Volver a Mis Citas
+            </a>
+        </div>
+
+        @if (TempData["MensajeExito"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["MensajeExito"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["MensajeError"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["MensajeError"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="row g-4">
+
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-4 text-primary">Información de la Cita</h4>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="border rounded-4 p-3 h-100 bg-light">
+                                    <small class="text-muted d-block">Paciente</small>
+                                    <strong>@Model.NombrePaciente</strong>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="border rounded-4 p-3 h-100 bg-light">
+                                    <small class="text-muted d-block">Médico</small>
+                                    <strong>@Model.NombreMedico</strong>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="border rounded-4 p-3 h-100 bg-light">
+                                    <small class="text-muted d-block">Especialidad</small>
+                                    <strong>@Model.Especialidad</strong>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="border rounded-4 p-3 h-100 bg-light">
+                                    <small class="text-muted d-block">Fecha y hora</small>
+                                    <strong>@Model.FechaHora.ToString("dd/MM/yyyy HH:mm")</strong>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="border rounded-4 p-3 h-100 bg-light">
+                                    <small class="text-muted d-block">Estado</small>
+                                    <span class="badge @(Model.EstadoCita == "Pendiente" ? "bg-warning text-dark" : Model.EstadoCita == "Completada" ? "bg-success" : "bg-danger") fs-6">
+                                        @Model.EstadoCita
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="border rounded-4 p-3 h-100 bg-light">
+                                    <small class="text-muted d-block">ID de la cita</small>
+                                    <strong>#@Model.IdCita</strong>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="border rounded-4 p-3 bg-light">
+                                    <small class="text-muted d-block mb-1">Motivo de consulta</small>
+                                    <strong>@Model.Motivo</strong>
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(Model.NotasMedico))
+                            {
+                                <div class="col-12">
+                                    <div class="border rounded-4 p-3 bg-light">
+                                        <small class="text-muted d-block mb-1">Notas médicas</small>
+                                        <strong>@Model.NotasMedico</strong>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-4 text-primary">Tratamientos Registrados</h4>
+
+                        @if (tratamientos.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="table align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Medicamento</th>
+                                            <th>Dosis</th>
+                                            <th>Duración</th>
+                                            <th>Instrucciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var t in tratamientos)
+                                        {
+                                            <tr>
+                                                <td>@t.Medicamento</td>
+                                                <td>@t.Dosis</td>
+                                                <td>@t.Duracion</td>
+                                                <td>@t.Instrucciones</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-4 text-muted">
+                                Todavía no hay tratamientos registrados para esta cita.
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-4 text-primary">Registrar Tratamiento</h4>
+
+                        <form asp-controller="HistorialMedico" asp-action="Create" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="IdCita" value="@Model.IdCita" />
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Medicamento</label>
+                                <input name="Medicamento" class="form-control rounded-3" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Dosis</label>
+                                <input name="Dosis" class="form-control rounded-3" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Duración</label>
+                                <input name="Duracion" class="form-control rounded-3" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Instrucciones</label>
+                                <textarea name="Instrucciones" class="form-control rounded-3" rows="4"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary rounded-pill w-100">
+                                Guardar tratamiento
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                @if (Model.EstadoCita == "Pendiente")
+                {
+                    <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                        <div class="card-body p-4">
+                            <h4 class="fw-bold mb-3 text-success">Finalizar Consulta</h4>
+                            <p class="text-muted">
+                                Cuando hayas terminado la atención y registrado el tratamiento, puedes marcar la cita como completada.
+                            </p>
+
+                            <form asp-action="Completar" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@Model.IdCita" />
+
+                                <button type="submit" class="btn btn-success rounded-pill w-100">
+                                    Marcar como completada
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>

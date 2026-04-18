@@ -156,5 +156,69 @@ namespace Proyecto_PWA_Clinica_API.Controllers
                 });
             }
         }
+        [HttpGet("ConsultarCitasMedico/{idUsuario:int}")]
+        public async Task<IActionResult> ConsultarCitasMedico(int idUsuario)
+        {
+            if (idUsuario <= 0)
+            {
+                return BadRequest(new RespuestaApi
+                {
+                    EsCorrecto = false,
+                    Mensaje = "El IdUsuario enviado no es valido."
+                });
+            }
+
+            try
+            {
+                var citas = await _citaRepository.ConsultarCitasMedico(idUsuario);
+                return Ok(citas);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new RespuestaApi
+                {
+                    EsCorrecto = false,
+                    Mensaje = ex.Message
+                });
+            }
+        }
+
+        [HttpGet("ConsultarDetalleCitaMedico/{idUsuario:int}/{idCita:int}")]
+        public async Task<IActionResult> ConsultarDetalleCitaMedico(int idUsuario, int idCita)
+        {
+            if (idUsuario <= 0 || idCita <= 0)
+            {
+                return BadRequest(new RespuestaApi
+                {
+                    EsCorrecto = false,
+                    Mensaje = "Los identificadores enviados no son validos."
+                });
+            }
+
+            try
+            {
+                var cita = await _citaRepository.ConsultarDetalleCitaMedico(idUsuario, idCita);
+
+                if (cita == null)
+                {
+                    return BadRequest(new RespuestaApi
+                    {
+                        EsCorrecto = false,
+                        Mensaje = "La cita solicitada no existe para el medico indicado."
+                    });
+                }
+
+                return Ok(cita);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new RespuestaApi
+                {
+                    EsCorrecto = false,
+                    Mensaje = ex.Message
+                });
+            }
+        }
+
     }
 }

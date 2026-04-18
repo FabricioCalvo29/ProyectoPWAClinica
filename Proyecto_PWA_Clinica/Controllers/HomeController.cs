@@ -59,11 +59,22 @@ namespace Proyecto_PWA_Clinica.Controllers
                 HttpContext.Session.SetInt32("IdUsuario", respuesta.Usuario.IdUsuario);
                 HttpContext.Session.SetString("Token", respuesta.Token);
 
-                var rolPrincipal = respuesta.Usuario.Roles.FirstOrDefault()?.NombreRol ?? "";
+                var rolPrincipalObj =
+     respuesta.Usuario.Roles.FirstOrDefault(r => r.NombreRol == "Administrador")
+     ?? respuesta.Usuario.Roles.FirstOrDefault(r => r.NombreRol == "Medico")
+     ?? respuesta.Usuario.Roles.FirstOrDefault(r => r.NombreRol == "Paciente");
+
+                var rolPrincipal = rolPrincipalObj?.NombreRol ?? "";
+                var idRolPrincipal = rolPrincipalObj?.IdRol.ToString() ?? "";
+
                 HttpContext.Session.SetString("RolUsuario", rolPrincipal);
+                HttpContext.Session.SetString("IdRolPrincipal", idRolPrincipal);
 
                 if (rolPrincipal == "Administrador")
                     return RedirectToAction("DashboardAdmin", "Home");
+
+                if (rolPrincipal == "Medico")
+                    return RedirectToAction("DashboardMedico", "Home");
 
                 if (rolPrincipal == "Paciente")
                     return RedirectToAction("DashboardPaciente", "Home");
@@ -212,6 +223,28 @@ namespace Proyecto_PWA_Clinica.Controllers
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
+        }
+        [HttpGet]
+        [ValidarSesion]
+        public async Task<IActionResult> DashboardMedico()
+        {
+            var idUsuario = HttpContext.Session.GetInt32("IdUsuario");
+
+            if (idUsuario == null)
+                return RedirectToAction("IniciarSesion");
+
+            var estadisticas = await _dashboardService.ConsultarEstadisticasMedico(idUsuario.Value);
+
+            var citas = await _citaService.ConsultarCitasMedico(idUsuario.Value);
+            citas = citas
+                .Where(c => c.EstadoCita == "Pendiente")
+                .OrderBy(c => c.FechaHora)
+                .ToList();
+
+            ViewBag.NombreUsuario = HttpContext.Session.GetString("NombreUsuario");
+            ViewBag.Citas = citas;
+
+            return View(estadisticas);
         }
     }
 }

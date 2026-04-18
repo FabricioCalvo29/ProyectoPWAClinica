@@ -41,5 +41,18 @@ namespace Proyecto_PWA_Clinica.Services
             
             return JsonSerializer.Deserialize<EstadisticasPaciente>(respuestaJson, opciones) ?? new EstadisticasPaciente();
         }
+        public async Task<EstadisticasMedico> ConsultarEstadisticasMedico(int idUsuario)
+        {
+            var url = _configuration["Valores:UrlAPI"] + $"Dashboard/EstadisticasMedico/{idUsuario}";
+            var response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+                return new EstadisticasMedico();
+
+            var respuestaJson = await response.Content.ReadAsStringAsync();
+            var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            return JsonSerializer.Deserialize<EstadisticasMedico>(respuestaJson, opciones) ?? new EstadisticasMedico();
+        }
     }
 }

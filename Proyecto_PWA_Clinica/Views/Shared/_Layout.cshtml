@@ -67,16 +67,20 @@
                         var rolPrincipal = Context.Session.GetString("IdRolPrincipal");
                         var isLogged = Context.Session.GetString("NombreUsuario") != null;
                     }
-
                     @if (isLogged)
                     {
-                        if (rolPrincipal == "1" || rolPrincipal == "2") // Admin o Superadmin
+                        if (rolPrincipal == "1")
                         {
                             <li><a asp-controller="Home" asp-action="DashboardAdmin" class="active">Panel Admin</a></li>
                             <li><a asp-controller="Pacientes" asp-action="Index">Pacientes</a></li>
                             <li><a asp-controller="Citas" asp-action="AdminIndex">Todas las Citas</a></li>
                         }
-                        else // Paciente 
+                        else if (rolPrincipal == "3")
+                        {
+                            <li><a asp-controller="Home" asp-action="DashboardMedico" class="active">Panel Médico</a></li>
+                            <li><a asp-controller="Citas" asp-action="MedicoIndex">Mis Citas</a></li>
+                        }
+                        else
                         {
                             <li><a asp-controller="Home" asp-action="DashboardPaciente" class="active">Mi Panel</a></li>
                             <li><a asp-controller="Citas" asp-action="Index">Mis Citas</a></li>

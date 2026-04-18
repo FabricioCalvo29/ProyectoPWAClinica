@@ -1,6 +1,6 @@
 using Proyecto_PWA_Clinica.Models;
-using System.Text.Json;
 using System.Text;
+using System.Text.Json;
 
 namespace Proyecto_PWA_Clinica.Services
 {
@@ -76,15 +76,25 @@ namespace Proyecto_PWA_Clinica.Services
 
         private static string ExtraerMensajeRespuesta(string respuestaJson)
         {
-            if (string.IsNullOrWhiteSpace(respuestaJson)) return string.Empty;
+            if (string.IsNullOrWhiteSpace(respuestaJson))
+                return string.Empty;
+
             try
             {
                 using var document = JsonDocument.Parse(respuestaJson);
                 var root = document.RootElement;
-                if (root.TryGetProperty("mensaje", out var mensaje)) return mensaje.GetString() ?? string.Empty;
-                if (root.TryGetProperty("Mensaje", out mensaje)) return mensaje.GetString() ?? string.Empty;
+
+                if (root.TryGetProperty("mensaje", out var mensaje))
+                    return mensaje.GetString() ?? string.Empty;
+
+                if (root.TryGetProperty("Mensaje", out mensaje))
+                    return mensaje.GetString() ?? string.Empty;
             }
-            catch { return respuestaJson; }
+            catch
+            {
+                return respuestaJson;
+            }
+
             return respuestaJson;
         }
     }

@@ -41,5 +41,20 @@ namespace Proyecto_PWA_Clinica_API.Repositories
 
             return resultado ?? new EstadisticasPacienteDto();
         }
+        public async Task<EstadisticasMedicoDto> ConsultarEstadisticasMedico(int idUsuario)
+        {
+            using IDbConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            var parametros = new DynamicParameters();
+            parametros.Add("@IdUsuario", idUsuario);
+
+            var resultado = await db.QueryFirstOrDefaultAsync<EstadisticasMedicoDto>(
+                "dbo.ConsultarEstadisticasMedico",
+                parametros,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return resultado ?? new EstadisticasMedicoDto();
+        }
     }
 }

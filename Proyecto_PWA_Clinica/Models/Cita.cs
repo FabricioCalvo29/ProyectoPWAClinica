@@ -23,6 +23,7 @@ namespace Proyecto_PWA_Clinica.Models
         public string Motivo { get; set; } = string.Empty;
 
         public string? NotasMedico { get; set; }
+        public string NombrePaciente { get; set; } = string.Empty;
         public string NombreMedico { get; set; } = string.Empty;
         public string Especialidad { get; set; } = string.Empty;
     }

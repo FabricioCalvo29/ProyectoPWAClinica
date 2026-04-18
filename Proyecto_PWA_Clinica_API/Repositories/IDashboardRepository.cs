@@ -6,5 +6,6 @@ namespace Proyecto_PWA_Clinica_API.Repositories
     {
         Task<EstadisticasAdminDto> ConsultarEstadisticasAdmin();
         Task<EstadisticasPacienteDto> ConsultarEstadisticasPaciente(int idUsuario);
+        Task<EstadisticasMedicoDto> ConsultarEstadisticasMedico(int idUsuario);
     }
 }

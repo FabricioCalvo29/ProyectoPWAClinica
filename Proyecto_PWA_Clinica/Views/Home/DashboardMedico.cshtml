@@ -1,0 +1,111 @@
+﻿@model Proyecto_PWA_Clinica.Models.EstadisticasMedico
+
+@{
+    Layout = "_Layout";
+    var citas = ViewBag.Citas as List<Proyecto_PWA_Clinica.Models.Cita> ?? new();
+}
+
+<section class="hero section light-background" style="padding-top: 100px; padding-bottom: 50px;">
+    <div class="container text-center">
+        <h2>Panel Médico 🩺</h2>
+        <p>Bienvenido, Dr(a). @ViewBag.NombreUsuario</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container" data-aos="fade-up">
+
+        <div class="row g-4 mb-5">
+            <div class="col-lg-3 col-md-6">
+                <div class="card shadow-sm border-0 bg-primary text-white text-center p-4" style="border-radius: 12px;">
+                    <i class="bi bi-calendar-day fs-1 mb-2"></i>
+                    <h3 class="fw-bold fs-2 mb-1">@Model.CitasHoy</h3>
+                    <p class="mb-0 text-white-50">Citas de Hoy</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="card shadow-sm border-0 bg-warning text-dark text-center p-4" style="border-radius: 12px;">
+                    <i class="bi bi-hourglass-split fs-1 mb-2"></i>
+                    <h3 class="fw-bold fs-2 mb-1">@Model.CitasPendientes</h3>
+                    <p class="mb-0">Pendientes</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="card shadow-sm border-0 bg-success text-white text-center p-4" style="border-radius: 12px;">
+                    <i class="bi bi-check-circle fs-1 mb-2"></i>
+                    <h3 class="fw-bold fs-2 mb-1">@Model.CitasCompletadas</h3>
+                    <p class="mb-0 text-white-50">Completadas</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="card shadow-sm border-0 bg-info text-white text-center p-4" style="border-radius: 12px;">
+                    <i class="bi bi-people fs-1 mb-2"></i>
+                    <h3 class="fw-bold fs-2 mb-1">@Model.TotalPacientesAtendidos</h3>
+                    <p class="mb-0 text-white-50">Pacientes Atendidos</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row gx-5">
+            <div class="col-lg-8 mb-4">
+                <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                    <div class="card-header bg-white border-bottom-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
+                        <h4 class="fw-bold text-dark">
+                            <i class="bi bi-calendar2-week me-2 text-primary"></i> Próximas Citas
+                        </h4>
+                        <a asp-controller="Citas" asp-action="MedicoIndex" class="btn btn-outline-primary btn-sm rounded-pill px-4">
+                            Ver todas
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        @if (citas.Any())
+                        {
+                            <ul class="list-group list-group-flush mt-3">
+                                @foreach (var cita in citas.OrderBy(c => c.FechaHora).Take(5))
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-start py-3 border-bottom border-light">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold fs-5">@cita.NombrePaciente</div>
+                                            <span class="text-muted">@cita.Especialidad</span><br />
+                                            <small class="text-secondary">@cita.Motivo</small>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge bg-primary fs-6 rounded-pill">@cita.FechaHora.ToString("dd/MM/yyyy")</span><br />
+                                            <span class="text-muted small">@cita.FechaHora.ToString("HH:mm")</span><br />
+                                            <a asp-controller="Citas" asp-action="MedicoDetails" asp-route-id="@cita.IdCita" class="btn btn-sm btn-outline-success mt-2">
+                                                Atender
+                                            </a>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <div class="text-center p-5 text-muted">
+                                No hay citas registradas para este médico.
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm bg-light" style="border-radius: 12px;">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold text-dark mb-4">Accesos Rápidos</h4>
+                        <div class="d-grid gap-3">
+                            <a asp-controller="Citas" asp-action="MedicoIndex" class="btn btn-outline-primary btn-lg rounded-pill">
+                                <i class="bi bi-list-check me-2"></i> Mis Citas
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
