@@ -181,6 +181,11 @@ namespace Proyecto_PWA_Clinica.Controllers
         [ValidarSesion]
         public async Task<IActionResult> DashboardAdmin()
         {
+            var idUsuario = HttpContext.Session.GetInt32("IdUsuario");
+
+            if (idUsuario == null)
+                return RedirectToAction("IniciarSesion");
+
             var estadisticas = await _dashboardService.ConsultarEstadisticasAdmin();
             var citas = await _citaService.ConsultarTodasLasCitas();
 
