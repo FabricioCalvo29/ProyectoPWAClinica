@@ -23,6 +23,7 @@ namespace Proyecto_PWA_Clinica_API.Repositories
 
                 var parametros = new DynamicParameters();
                 parametros.Add("@Nombre", model.Nombre);
+                parametros.Add("@Cedula", model.Cedula);
                 parametros.Add("@Apellido", model.Apellido);
                 parametros.Add("@Correo", model.Correo);
                 parametros.Add("@Contrasenna", model.Contrasena);

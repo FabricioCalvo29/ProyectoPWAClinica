@@ -2,447 +2,807 @@
     Layout = "_Layout";
 }
 
-<!-- Hero Section -->
-<section id="hero" class="hero section dark-background">
-    <div class="container-fluid p-0">
-        <div class="hero-wrapper">
-            <div class="hero-image">
-                <img src="img/Health/showcase-1.webp" alt="Atención médica integral" class="img-fluid">
-            </div>
+<style>
+/* neutralizar fondo blanco del body en esta página */
+body { background-color: #040d1a !important; }
 
-            <div class="hero-content">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-7 col-md-10" data-aos="fade-right" data-aos-delay="100">
-                            <div class="content-box">
+/* ══ HERO ════════════════════════════════════════════════ */
+.hero-pro {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #040d1a;
+}
+.hero-bg { position: absolute; inset: 0; z-index: 0; }
+.hero-bg img { width:100%; height:100%; object-fit:cover; opacity:.18; }
+.hero-bg::after {
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(135deg, rgba(4,13,26,.97) 0%, rgba(4,13,26,.75) 60%, rgba(8,30,60,.9) 100%);
+}
+.hero-grid {
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background-image:
+        linear-gradient(rgba(13,148,136,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(13,148,136,.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+}
+.hero-body {
+    position:relative; z-index:2;
+    flex:1; display:flex; align-items:center;
+    padding: 140px 0 80px;
+}
+.hero-eyebrow {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(13,148,136,.15);
+    border:1px solid rgba(13,148,136,.35);
+    border-radius:50px; padding:6px 16px; margin-bottom:28px;
+}
+.hero-eyebrow .dot {
+    width:7px; height:7px; background:#0d9488; border-radius:50%;
+    animation: blink 2s infinite;
+}
+@@keyframes blink {
+    0%,100%{opacity:1;transform:scale(1)}
+    50%{opacity:.4;transform:scale(.7)}
+}
+.hero-eyebrow span { font-size:.75rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#0d9488; }
+.hero-title {
+    font-size: clamp(2.6rem, 5vw, 4rem);
+    font-weight:800; line-height:1.1; color:#fff;
+    margin-bottom:20px; letter-spacing:-.02em;
+}
+.hero-title .accent { color:#0d9488; }
+.hero-sub {
+    font-size:1.05rem; color:rgba(255,255,255,.6);
+    line-height:1.75; margin-bottom:36px; max-width:520px;
+}
+.btn-hm {
+    display:inline-flex; align-items:center; gap:8px;
+    background:#0d9488; color:#fff;
+    font-size:.9rem; font-weight:700;
+    padding:14px 28px; border-radius:12px;
+    text-decoration:none; transition:background .2s, transform .15s;
+}
+.btn-hm:hover { background:#0f766e; color:#fff; transform:translateY(-2px); }
+.btn-ho {
+    display:inline-flex; align-items:center; gap:8px;
+    background:transparent; color:rgba(255,255,255,.85);
+    font-size:.9rem; font-weight:600;
+    padding:14px 28px; border-radius:12px;
+    text-decoration:none;
+    border:1.5px solid rgba(255,255,255,.2);
+    transition:border-color .2s, color .2s;
+}
+.btn-ho:hover { border-color:rgba(255,255,255,.5); color:#fff; }
 
-                                <div class="group-cover mb-4" data-aos="fade-up" data-aos-delay="120">
-                                    <div class="d-inline-flex align-items-center gap-2 mb-2">
-                                        <span class="badge-accent">Grupo 3</span>
-                                        <span class="badge-accent" style="background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18);">
-                                            Programación Avanzada en Web
-                                        </span>
-                                    </div>
+/* ── GROUP BAR ── */
+.group-bar {
+    position:relative; z-index:2;
+    background:rgba(255,255,255,.04);
+    border-top:1px solid rgba(255,255,255,.07);
+    padding:16px 0;
+}
+.gb-inner { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.gb-pill {
+    background:#0d9488; color:#fff;
+    font-size:.7rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+    padding:5px 14px; border-radius:50px; white-space:nowrap; flex-shrink:0;
+}
+.gb-course { font-size:.8rem; font-weight:600; color:rgba(255,255,255,.5); white-space:nowrap; }
+.gb-sep { color:rgba(255,255,255,.2); }
+.gb-students { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.gb-name { font-size:.78rem; color:rgba(255,255,255,.65); font-weight:500; display:flex; align-items:center; gap:5px; }
+.gb-name i { color:#0d9488; font-size:.72rem; }
 
-                                    <h2 class="mb-2" style="font-size: 1.35rem; line-height: 1.2;">
-                                        Proyecto: <span style="opacity:.92;">Plataforma de Atención Médica</span>
-                                    </h2>
+/* ══ TRUST BAR ══════════════════════════════════════════ */
+.trust-bar {
+    background:#071428;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    padding:40px 0;
+}
+.trust-item { text-align:center; padding:0 12px; }
+.trust-num {
+    font-size:2.4rem; font-weight:900; color:#fff;
+    letter-spacing:-.03em; line-height:1;
+    margin-bottom:6px;
+}
+.trust-num span { color:#0d9488; }
+.trust-label { font-size:.78rem; color:rgba(255,255,255,.4); font-weight:600; letter-spacing:.06em; text-transform:uppercase; }
+.trust-divider {
+    width:1px; height:48px;
+    background:rgba(255,255,255,.08);
+    align-self:center;
+}
 
-                                    <div class="row g-2 mt-2">
-                                        <div class="col-12 col-sm-6">
-                                            <div class="p-2 rounded-3" style="background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);">
-                                                <i class="bi bi-person-fill me-2" style="opacity:.9;"></i>Fabricio Jesús Calvo Montero
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-sm-6">
-                                            <div class="p-2 rounded-3" style="background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);">
-                                                <i class="bi bi-person-fill me-2" style="opacity:.9;"></i>Julian Clot Cordoba
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-sm-6">
-                                            <div class="p-2 rounded-3" style="background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);">
-                                                <i class="bi bi-person-fill me-2" style="opacity:.9;"></i>Yarling Darina Henry Calderón
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-sm-6">
-                                            <div class="p-2 rounded-3" style="background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);">
-                                                <i class="bi bi-person-fill me-2" style="opacity:.9;"></i>Jose Andres Vargas Araya
-                                            </div>
-                                        </div>
-                                    </div>
+/* ══ SVG WAVE DIVIDER ══════════════════════════════════ */
+.wave-divider { display:block; line-height:0; overflow:hidden; }
+.wave-divider svg { display:block; width:100%; }
 
-                                    <div class="mt-3" style="opacity:.9;">
-                                        <i class="bi bi-mortarboard-fill me-2"></i>Curso: Programación Avanzada en Web
-                                        <span class="mx-2">•</span>
-                                        <i class="bi bi-lightning-charge-fill me-2"></i>Entrega: Sitio informativo + inicio de sesion y registro de usuario
-                                    </div>
-                                </div>
+/* ══ SECTIONS ══════════════════════════════════════════ */
+.sec { padding:88px 0; }
+.sec-dark  { background:#040d1a; }
+.sec-dark2 { background:#071428; }
 
-                                <span class="badge-accent" data-aos="fade-up" data-aos-delay="150">Atención médica confiable</span>
-                                <h1 data-aos="fade-up" data-aos-delay="200">Cuidamos tu salud con atención rápida y humana</h1>
-                                <p data-aos="fade-up" data-aos-delay="250">
-                                    Agenda citas, encuentra especialistas y accede a información clara sobre nuestros servicios.
-                                    Nuestro objetivo es facilitar tu atención con un proceso simple, seguro y accesible.
-                                </p>
+.sec-dark  .sh h2,
+.sec-dark2 .sh h2 { color:#fff; }
+.sec-dark  .sh p,
+.sec-dark2 .sh p  { color:rgba(255,255,255,.5); }
 
-                                <div class="cta-group" data-aos="fade-up" data-aos-delay="300">
-                                    <a href="appointment.html" class="btn btn-primary">Agendar cita</a>
-                                    <a href="services.html" class="btn btn-outline">Ver servicios</a>
-                                </div>
+.sh { text-align:center; margin-bottom:52px; }
+.sh h2 { font-size:2rem; font-weight:800; letter-spacing:-.02em; margin-bottom:10px; }
+.sh p  { font-size:1rem; max-width:480px; margin:0 auto; }
+.sh-bar { width:44px; height:4px; background:#0d9488; border-radius:2px; margin:14px auto 0; }
 
-                                <div class="info-badges" data-aos="fade-up" data-aos-delay="350">
-                                    <div class="badge-item">
-                                        <i class="bi bi-telephone-fill"></i>
-                                        <div class="badge-content">
-                                            <span>Central telefónica</span>
-                                            <strong>+506 2222-2222</strong>
-                                        </div>
-                                    </div>
-                                    <div class="badge-item">
-                                        <i class="bi bi-clock-fill"></i>
-                                        <div class="badge-content">
-                                            <span>Horario</span>
-                                            <strong>Lun–Vie: 8:00 a.m. – 6:00 p.m.</strong>
-                                        </div>
-                                    </div>
-                                </div>
+/* ══ CÓMO FUNCIONA ══════════════════════════════════════ */
+.steps-wrap { position:relative; }
+.steps-line {
+    position:absolute; top:36px; left:50%; transform:translateX(-50%);
+    width:60%; height:2px;
+    background:linear-gradient(90deg, transparent, rgba(13,148,136,.4), transparent);
+    display:none;
+}
+@@media(min-width:992px){ .steps-line { display:block; } }
+.step-card { text-align:center; padding:0 16px; }
+.step-num {
+    width:72px; height:72px; border-radius:50%;
+    background:rgba(13,148,136,.12);
+    border:2px solid rgba(13,148,136,.35);
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto 20px;
+    font-size:1.5rem; color:#0d9488;
+    position:relative; z-index:1;
+    transition:background .3s, border-color .3s;
+}
+.step-card:hover .step-num {
+    background:rgba(13,148,136,.25);
+    border-color:#0d9488;
+}
+.step-card h5 { font-size:1rem; font-weight:800; color:#fff; margin-bottom:8px; }
+.step-card p  { font-size:.85rem; color:rgba(255,255,255,.45); line-height:1.65; max-width:220px; margin:0 auto; }
 
-                            </div>
-                        </div>
-                    </div>
+/* ══ DEPT CARDS ════════════════════════════════════════ */
+.dc {
+    border-radius:20px; overflow:hidden; height:100%;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.09);
+    transition:transform .25s, box-shadow .25s;
+}
+.dc:hover { transform:translateY(-6px); box-shadow:0 20px 48px rgba(0,0,0,.3); }
+.dc .dc-img { position:relative; height:190px; overflow:hidden; }
+.dc .dc-img img { width:100%; height:100%; object-fit:cover; transition:transform .4s; }
+.dc:hover .dc-img img { transform:scale(1.06); }
+.dc-badge {
+    position:absolute; top:14px; left:14px;
+    background:rgba(13,148,136,.9); color:#fff;
+    font-size:.68rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+    padding:4px 12px; border-radius:50px;
+}
+.dc-body { padding:24px; }
+.dc-icon {
+    width:44px; height:44px; border-radius:12px;
+    background:rgba(13,148,136,.15);
+    display:flex; align-items:center; justify-content:center;
+    color:#0d9488; font-size:1.2rem; margin-bottom:14px;
+}
+.dc-body h3 { font-size:1.1rem; font-weight:800; color:#fff; margin-bottom:8px; }
+.dc-body p  { font-size:.87rem; color:rgba(255,255,255,.5); line-height:1.65; margin-bottom:18px; }
+.dc-link {
+    display:inline-flex; align-items:center; gap:6px;
+    color:#0d9488; font-size:.85rem; font-weight:700;
+    text-decoration:none; transition:gap .2s;
+}
+.dc-link:hover { gap:10px; }
 
-                    <div class="features-wrapper">
-                        <div class="row gy-4">
+/* ══ DOCTOR CARDS ══════════════════════════════════════ */
+.doc {
+    border-radius:20px; overflow:hidden; height:100%;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.09);
+    transition:transform .25s, box-shadow .25s;
+    position:relative;
+}
+.doc:hover { transform:translateY(-6px); box-shadow:0 20px 48px rgba(0,0,0,.3); }
+.doc .di { position:relative; height:230px; overflow:hidden; }
+.doc .di img { width:100%; height:100%; object-fit:cover; object-position:top; transition:transform .4s; }
+.doc:hover .di img { transform:scale(1.05); }
 
-                            <div class="col-lg-4">
-                                <div class="feature-item" data-aos="fade-up" data-aos-delay="450">
-                                    <div class="feature-icon">
-                                        <i class="bi bi-person-badge-fill"></i>
-                                    </div>
-                                    <div class="feature-text">
-                                        <h3>Medicina General</h3>
-                                        <p>Consultas, control de presión/azúcar, certificados y seguimiento clínico.</p>
-                                    </div>
-                                </div>
-                            </div>
+/* overlay hover en médicos */
+.doc-overlay {
+    position:absolute; inset:0;
+    background:linear-gradient(to top, rgba(4,13,26,.92) 0%, transparent 55%);
+    opacity:0; transition:opacity .3s;
+    display:flex; align-items:flex-end; padding:16px;
+    pointer-events:none;
+}
+.doc:hover .doc-overlay { opacity:1; }
+.doc-overlay-info { width:100%; }
+.doc-overlay-info p { font-size:.75rem; color:rgba(255,255,255,.7); margin:0 0 4px; }
+.doc-overlay-info .schedule { font-size:.8rem; font-weight:700; color:#0d9488; }
 
-                            <div class="col-lg-4">
-                                <div class="feature-item" data-aos="fade-up" data-aos-delay="500">
-                                    <div class="feature-icon">
-                                        <i class="bi bi-clipboard2-pulse-fill"></i>
-                                    </div>
-                                    <div class="feature-text">
-                                        <h3>Pediatría</h3>
-                                        <p>Atención infantil, control de crecimiento, orientación a padres y vacunas.</p>
-                                    </div>
-                                </div>
-                            </div>
+.avail {
+    position:absolute; top:14px; right:14px;
+    font-size:.68rem; font-weight:800; letter-spacing:.07em; text-transform:uppercase;
+    padding:5px 13px; border-radius:50px; z-index:2;
+}
+.avail.on  { background:#dcfce7; color:#15803d; }
+.avail.off { background:#fef9c3; color:#a16207; }
+.db { padding:20px 22px 22px; }
+.db h5 {
+    font-size:1rem; font-weight:800; color:#fff; margin-bottom:3px;
+    display:flex; align-items:center; gap:6px;
+}
+.db h5 .verified { color:#0d9488; font-size:.85rem; }
+.db .ds { font-size:.8rem; color:#0d9488; font-weight:700; margin-bottom:2px; }
+.db .de { font-size:.78rem; color:rgba(255,255,255,.35); margin-bottom:10px; }
+.stars { display:flex; align-items:center; gap:3px; margin-bottom:16px; }
+.stars i { color:#f59e0b; font-size:.8rem; }
+.stars span { font-size:.78rem; color:rgba(255,255,255,.35); margin-left:4px; }
+.dac { display:flex; gap:8px; }
+.btn-dp {
+    flex:1; padding:9px; border-radius:10px; font-size:.82rem; font-weight:700;
+    border:1.5px solid rgba(13,148,136,.6); color:#0d9488; background:transparent;
+    text-align:center; text-decoration:none; transition:background .2s, color .2s;
+}
+.btn-dp:hover { background:#0d9488; color:#fff; border-color:#0d9488; }
+.btn-dc {
+    flex:1; padding:9px; border-radius:10px; font-size:.82rem; font-weight:700;
+    background:#0d9488; color:#fff; border:none;
+    text-align:center; text-decoration:none; transition:opacity .2s;
+}
+.btn-dc:hover { opacity:.87; color:#fff; }
 
-                            <div class="col-lg-4">
-                                <div class="feature-item" data-aos="fade-up" data-aos-delay="550">
-                                    <div class="feature-icon">
-                                        <i class="bi bi-capsule"></i>
-                                    </div>
-                                    <div class="feature-text">
-                                        <h3>Laboratorio</h3>
-                                        <p>Exámenes de sangre/orina, resultados digitales y tiempos de entrega claros.</p>
-                                    </div>
-                                </div>
-                            </div>
+/* ══ TESTIMONIOS ═══════════════════════════════════════ */
+.tcard {
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:20px; padding:28px;
+    height:100%; transition:transform .25s, box-shadow .25s;
+    position:relative;
+}
+.tcard:hover { transform:translateY(-4px); box-shadow:0 16px 40px rgba(0,0,0,.25); }
+.tcard-quote {
+    font-size:2.5rem; line-height:1; color:#0d9488;
+    font-family:Georgia, serif; margin-bottom:12px;
+}
+.tcard p {
+    font-size:.9rem; color:rgba(255,255,255,.6);
+    line-height:1.75; margin-bottom:20px; font-style:italic;
+}
+.tcard-author { display:flex; align-items:center; gap:12px; }
+.tcard-avatar {
+    width:44px; height:44px; border-radius:50%;
+    background:rgba(13,148,136,.2);
+    border:2px solid rgba(13,148,136,.4);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1rem; color:#0d9488; font-weight:800; flex-shrink:0;
+}
+.tcard-info strong { display:block; font-size:.88rem; color:#fff; font-weight:700; }
+.tcard-info span   { font-size:.76rem; color:rgba(255,255,255,.35); }
+.tcard-stars { display:flex; gap:2px; margin-bottom:4px; }
+.tcard-stars i { color:#f59e0b; font-size:.72rem; }
 
-                        </div>
-                    </div>
+/* ══ CTA ══════════════════════════════════════════════════ */
+.cta-box {
+    background:rgba(13,148,136,.08);
+    border-radius:28px; padding:64px 48px;
+    position:relative; overflow:hidden;
+    border:1px solid rgba(13,148,136,.25);
+}
+.cta-box::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg, rgba(13,148,136,.15) 0%, transparent 60%);
+    pointer-events:none;
+}
+.cta-grid {
+    position:absolute; inset:0; pointer-events:none;
+    background-image:
+        linear-gradient(rgba(13,148,136,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(13,148,136,.06) 1px, transparent 1px);
+    background-size:48px 48px;
+}
+.cta-inner { position:relative; z-index:1; text-align:center; }
+.cta-inner h2 { font-size:2rem; font-weight:800; color:#fff; margin-bottom:12px; letter-spacing:-.02em; }
+.cta-inner p  { color:rgba(255,255,255,.55); font-size:1rem; max-width:500px; margin:0 auto 32px; }
+.cta-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:44px; }
+.btn-cm {
+    background:#0d9488; color:#fff; font-weight:700; font-size:.9rem;
+    padding:14px 32px; border-radius:12px; text-decoration:none;
+    transition:background .2s, transform .15s;
+}
+.btn-cm:hover { background:#0f766e; color:#fff; transform:translateY(-2px); }
+.btn-cg {
+    background:rgba(255,255,255,.08); color:rgba(255,255,255,.85);
+    border:1.5px solid rgba(255,255,255,.18); font-weight:700; font-size:.9rem;
+    padding:14px 32px; border-radius:12px; text-decoration:none;
+    transition:background .2s;
+}
+.btn-cg:hover { background:rgba(255,255,255,.14); color:#fff; }
+.cta-feats { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; }
+.cta-feat {
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+    border-radius:16px; padding:24px 20px; text-align:center; width:190px;
+    text-decoration:none; color:#fff; transition:background .2s;
+}
+.cta-feat:hover { background:rgba(255,255,255,.12); color:#fff; }
+.cta-feat i { font-size:1.5rem; margin-bottom:10px; display:block; color:#0d9488; }
+.cta-feat h6 { font-size:.88rem; font-weight:700; margin-bottom:5px; color:#fff; }
+.cta-feat p  { font-size:.75rem; color:rgba(255,255,255,.45); margin:0; line-height:1.5; }
 
-                </div>
-            </div>
-        </div>
+@@media (max-width:992px) {
+    .hero-body { padding:120px 0 60px; }
+    .cta-box { padding:44px 24px; }
+    .trust-divider { display:none; }
+}
+@@media (max-width:576px) {
+    .hero-title { font-size:2.2rem; }
+    .gb-students { gap:6px; }
+    .cta-feats { flex-direction:column; align-items:center; }
+    .trust-num { font-size:1.8rem; }
+}
+</style>
+
+<!-- ══════════════════════════════════════════ HERO -->
+<section class="hero-pro">
+    <div class="hero-bg">
+        <img src="img/Health/showcase-1.webp" alt="">
     </div>
-</section><!-- /Hero Section -->
-<!-- Home About Section -->
-<section id="home-about" class="home-about section">
-    <div class="container" data-aos="fade-up" data-aos-delay="100">
+    <div class="hero-grid"></div>
 
-        <div class="row gy-5 align-items-center">
-            <div class="col-lg-6" data-aos="fade-right" data-aos-delay="200">
-                <div class="about-image">
-                    <img src="img/facilities-1.webp" alt="Instalaciones modernas para tu atención" class="img-fluid rounded-3 mb-4">
-                    <div class="experience-badge">
-                        <span class="years">10+</span>
-                        <span class="text">Años de servicio</span>
+    <div class="hero-body">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10 text-center text-lg-start" data-aos="fade-up" data-aos-delay="100">
+
+                    <div class="hero-eyebrow d-inline-flex">
+                        <span class="dot"></span>
+                        <span>Atención médica confiable</span>
                     </div>
-                </div>
-            </div>
 
-            <div class="col-lg-6" data-aos="fade-left" data-aos-delay="300">
-                <div class="about-content">
-                    <h2>Atención de calidad, con enfoque en prevención</h2>
-                    <p class="lead">
-                        Brindamos consultas, orientación y seguimiento para que tomes decisiones informadas sobre tu salud.
+                    <h1 class="hero-title">
+                        Cuidamos tu salud<br>
+                        con atención <span class="accent">rápida</span><br>
+                        y humana
+                    </h1>
+
+                    <p class="hero-sub mx-auto mx-lg-0">
+                        Gestiona tus citas, accede a tu historial y conecta con especialistas fácilmente desde cualquier lugar.
                     </p>
 
-                    <p>
-                        Nuestro equipo trabaja con protocolos de atención, privacidad de datos y un enfoque centrado en el paciente.
-                        Puedes agendar en línea, consultar disponibilidad y recibir indicaciones claras antes de tu cita.
-                    </p>
-
-                    <div class="row g-4 mt-4">
-                        <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
-                            <div class="feature-item">
-                                <div class="icon">
-                                    <i class="bi bi-heart-pulse"></i>
-                                </div>
-                                <h4>Trato humano</h4>
-                                <p>Atención cercana, explicación clara y acompañamiento en cada paso.</p>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6" data-aos="fade-up" data-aos-delay="500">
-                            <div class="feature-item">
-                                <div class="icon">
-                                    <i class="bi bi-shield-check"></i>
-                                </div>
-                                <h4>Seguridad y privacidad</h4>
-                                <p>Datos protegidos y buenas prácticas de manejo de información.</p>
-                            </div>
-                        </div>
+                    <div class="d-flex gap-3 flex-wrap justify-content-center justify-content-lg-start">
+                        <a href="/Home/IniciarSesion" class="btn-hm">
+                            <i class="bi bi-calendar-check"></i> Agendar cita
+                        </a>
+                        <a href="#featured-departments" class="btn-ho">
+                            Ver servicios →
+                        </a>
                     </div>
 
-                    <div class="cta-wrapper mt-4">
-                        <a href="about.html" class="btn btn-primary">Conoce más</a>
-                        <a href="#" class="btn btn-outline">Nuestro equipo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GROUP BAR -->
+    <div class="group-bar">
+        <div class="container">
+            <div class="gb-inner">
+                <span class="gb-pill">Grupo 3</span>
+                <span class="gb-course">Programación Avanzada en Web</span>
+                <span class="gb-sep">·</span>
+                <div class="gb-students">
+                    <span class="gb-name"><i class="bi bi-person-fill"></i>Fabricio Calvo</span>
+                    <span class="gb-sep">·</span>
+                    <span class="gb-name"><i class="bi bi-person-fill"></i>Julian Clot</span>
+                    <span class="gb-sep">·</span>
+                    <span class="gb-name"><i class="bi bi-person-fill"></i>Yarling Henry</span>
+                    <span class="gb-sep">·</span>
+                    <span class="gb-name"><i class="bi bi-person-fill"></i>Jose Andrés Vargas</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════ TRUST BAR -->
+<section class="trust-bar">
+    <div class="container">
+        <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
+            <div class="trust-item">
+                <div class="trust-num"><span class="counter" data-target="1200">0</span><span>+</span></div>
+                <div class="trust-label">Pacientes atendidos</div>
+            </div>
+            <div class="trust-divider d-none d-md-block"></div>
+            <div class="trust-item">
+                <div class="trust-num"><span class="counter" data-target="15">0</span><span>+</span></div>
+                <div class="trust-label">Especialistas</div>
+            </div>
+            <div class="trust-divider d-none d-md-block"></div>
+            <div class="trust-item">
+                <div class="trust-num"><span class="counter" data-target="98">0</span><span>%</span></div>
+                <div class="trust-label">Satisfacción</div>
+            </div>
+            <div class="trust-divider d-none d-md-block"></div>
+            <div class="trust-item">
+                <div class="trust-num"><span class="counter" data-target="8">0</span><span></span></div>
+                <div class="trust-label">Especialidades</div>
+            </div>
+            <div class="trust-divider d-none d-md-block"></div>
+            <div class="trust-item">
+                <div class="trust-num"><span class="counter" data-target="24">0</span><span>/7</span></div>
+                <div class="trust-label">Disponibilidad</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- wave de trust bar → departamentos -->
+<div class="wave-divider" style="background:#071428;">
+    <svg viewBox="0 0 1440 48" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,0 C360,48 1080,48 1440,0 L1440,48 L0,48 Z" fill="#071428"/>
+        <path d="M0,0 C360,48 1080,48 1440,0" fill="none" stroke="rgba(13,148,136,.15)" stroke-width="1.5"/>
+    </svg>
+</div>
+
+<!-- ══════════════════════════════════════════ CÓMO FUNCIONA -->
+<section class="sec sec-dark2" style="padding-top:60px;">
+    <div class="container">
+        <div class="sh" data-aos="fade-up">
+            <h2>¿Cómo funciona?</h2>
+            <p>Agenda tu cita en tres pasos simples, sin complicaciones</p>
+            <div class="sh-bar"></div>
+        </div>
+        <div class="steps-wrap">
+            <div class="steps-line"></div>
+            <div class="row gy-5 justify-content-center">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="step-card">
+                        <div class="step-num">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <h5>Elige tu especialidad</h5>
+                        <p>Explora nuestros departamentos y selecciona la especialidad que necesitas.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="step-card">
+                        <div class="step-num">
+                            <i class="bi bi-person-check"></i>
+                        </div>
+                        <h5>Selecciona tu médico</h5>
+                        <p>Revisa perfiles, calificaciones y disponibilidad para elegir al especialista ideal.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="step-card">
+                        <div class="step-num">
+                            <i class="bi bi-calendar2-check"></i>
+                        </div>
+                        <h5>Confirma tu cita</h5>
+                        <p>Selecciona fecha y hora. Recibirás confirmación y recordatorio automático.</p>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</section>
 
-        <div class="row mt-5 pt-4 certifications-row" data-aos="fade-up" data-aos-delay="600">
-            <div class="col-12 text-center mb-4">
-                <h4 class="certification-title">Respaldo y aliados</h4>
-            </div>
-            <div class="col-12">
-                <div class="certifications">
-                    <div class="certification-item" data-aos="zoom-in" data-aos-delay="700">
-                        <img src="/img/Clientes/clients-1.webp" alt="Aliado 1">
-                    </div>
-                    <div class="certification-item" data-aos="zoom-in" data-aos-delay="800">
-                        <img src="/img/Clientes/clients-2.webp" alt="Aliado 2">
-                    </div>
-                    <div class="certification-item" data-aos="zoom-in" data-aos-delay="900">
-                        <img src="/img/Clientes/clients-3.webp" alt="Aliado 3">
-                    </div>
-                    <div class="certification-item" data-aos="zoom-in" data-aos-delay="1000">
-                        <img src="/img/Clientes/clients-4.webp" alt="Aliado 4">
-                    </div>
-                </div>
-            </div>
+<!-- wave de cómo funciona → departamentos -->
+<div class="wave-divider" style="background:#040d1a;">
+    <svg viewBox="0 0 1440 48" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,48 C360,0 1080,0 1440,48 L1440,0 L0,0 Z" fill="#071428"/>
+        <path d="M0,48 C360,0 1080,0 1440,48" fill="none" stroke="rgba(13,148,136,.15)" stroke-width="1.5"/>
+    </svg>
+</div>
+
+<!-- ══════════════════════════════════════════ DEPARTAMENTOS -->
+<section id="featured-departments" class="sec sec-dark">
+    <div class="container">
+        <div class="sh" data-aos="fade-up">
+            <h2>Departamentos destacados</h2>
+            <p>Especialidades principales para tu atención y seguimiento</p>
+            <div class="sh-bar"></div>
         </div>
-
-    </div>
-</section><!-- /Home About Section -->
-<!-- Featured Departments Section (SOLO 3) -->
-<section id="featured-departments" class="featured-departments section">
-
-    <div class="container section-title" data-aos="fade-up">
-        <h2>Departamentos destacados</h2>
-        <p>Especialidades principales para tu atención y seguimiento</p>
-    </div>
-
-    <div class="container" data-aos="fade-up" data-aos-delay="100">
         <div class="row gy-4">
-
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                <div class="department-card">
-                    <div class="department-image">
-                        <img src="img/Health/cardiology-3.webp" alt="Departamento de cardiología" class="img-fluid">
+                <div class="dc">
+                    <div class="dc-img">
+                        <img src="img/Health/cardiology-3.webp" alt="Cardiología">
+                        <span class="dc-badge">Cardiología</span>
                     </div>
-                    <div class="department-content">
-                        <div class="department-icon">
-                            <i class="fas fa-heartbeat"></i>
-                        </div>
+                    <div class="dc-body">
+                        <div class="dc-icon"><i class="fas fa-heartbeat"></i></div>
                         <h3>Cardiología</h3>
                         <p>Chequeos, electrocardiogramas, control de riesgo cardiovascular y seguimiento de pacientes.</p>
-                        <a href="department-details.html" class="btn-learn-more">
-                            <span>Ver detalles</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
+                        <a href="#find-a-doctor" class="dc-link">Ver médicos <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
-
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                <div class="department-card">
-                    <div class="department-image">
-                        <img src="img/Health/neurology-2.webp" alt="Departamento de neurología" class="img-fluid">
+                <div class="dc">
+                    <div class="dc-img">
+                        <img src="img/Health/neurology-2.webp" alt="Neurología">
+                        <span class="dc-badge">Neurología</span>
                     </div>
-                    <div class="department-content">
-                        <div class="department-icon">
-                            <i class="fas fa-brain"></i>
-                        </div>
+                    <div class="dc-body">
+                        <div class="dc-icon"><i class="fas fa-brain"></i></div>
                         <h3>Neurología</h3>
                         <p>Consulta especializada, evaluación de migrañas, memoria, sueño y control neurológico.</p>
-                        <a href="department-details.html" class="btn-learn-more">
-                            <span>Ver detalles</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
+                        <a href="#find-a-doctor" class="dc-link">Ver médicos <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
-
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                <div class="department-card">
-                    <div class="department-image">
-                        <img src="img/Health/pediatrics-3.webp" alt="Departamento de pediatría" class="img-fluid">
+                <div class="dc">
+                    <div class="dc-img">
+                        <img src="img/Health/pediatrics-3.webp" alt="Pediatría">
+                        <span class="dc-badge">Pediatría</span>
                     </div>
-                    <div class="department-content">
-                        <div class="department-icon">
-                            <i class="fas fa-baby"></i>
-                        </div>
+                    <div class="dc-body">
+                        <div class="dc-icon"><i class="fas fa-baby"></i></div>
                         <h3>Pediatría</h3>
                         <p>Control del desarrollo, valoración clínica, seguimiento y orientación familiar.</p>
-                        <a href="department-details.html" class="btn-learn-more">
-                            <span>Ver detalles</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
+                        <a href="#find-a-doctor" class="dc-link">Ver médicos <i class="bi bi-arrow-right"></i></a>
                     </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section><!-- /Featured Departments Section -->
-<!-- Find A Doctor Section (SOLO 3 MÉDICOS) -->
-<section id="find-a-doctor" class="find-a-doctor section">
-
-    <div class="container section-title" data-aos="fade-up">
-        <h2>Nuestros médicos</h2>
-        <p>Profesionales con experiencia y atención centrada en el paciente</p>
-    </div>
-
-    <div class="container" data-aos="fade-up" data-aos-delay="100">
-        <div class="row" data-aos="fade-up" data-aos-delay="400">
-
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="doctor-card">
-                    <div class="doctor-image">
-                        <img src="img/Health/staff-3.webp" alt="Dra. Sarah Mitchell" class="img-fluid">
-                        <div class="availability-badge online">Disponible</div>
-                    </div>
-                    <div class="doctor-info">
-                        <h5>Dra. Sarah Mitchell</h5>
-                        <p class="specialty">Cardiología</p>
-                        <p class="experience">15+ años de experiencia</p>
-                        <div class="rating">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <span class="rating-text">(4.9)</span>
-                        </div>
-                        <div class="appointment-actions">
-                            <a href="#" class="btn btn-outline-primary btn-sm">Ver perfil</a>
-                            <a href="#" class="btn btn-primary btn-sm">Agendar cita</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="doctor-card">
-                    <div class="doctor-image">
-                        <img src="img/Health/staff-7.webp" alt="Dr. Michael Rodriguez" class="img-fluid">
-                        <div class="availability-badge busy">Ocupado</div>
-                    </div>
-                    <div class="doctor-info">
-                        <h5>Dr. Michael Rodriguez</h5>
-                        <p class="specialty">Neurología</p>
-                        <p class="experience">12+ años de experiencia</p>
-                        <div class="rating">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-half"></i>
-                            <span class="rating-text">(4.7)</span>
-                        </div>
-                        <div class="appointment-actions">
-                            <a href="#" class="btn btn-outline-primary btn-sm">Ver perfil</a>
-                            <a href="#" class="btn btn-primary btn-sm">Agendar cita</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="doctor-card">
-                    <div class="doctor-image">
-                        <img src="img/Health/staff-1.webp" alt="Dra. Emily Chen" class="img-fluid">
-                        <div class="availability-badge online">Disponible</div>
-                    </div>
-                    <div class="doctor-info">
-                        <h5>Dra. Emily Chen</h5>
-                        <p class="specialty">Pediatría</p>
-                        <p class="experience">8+ años de experiencia</p>
-                        <div class="rating">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <span class="rating-text">(5.0)</span>
-                        </div>
-                        <div class="appointment-actions">
-                            <a href="#" class="btn btn-outline-primary btn-sm">Ver perfil</a>
-                            <a href="#" class="btn btn-primary btn-sm">Agendar cita</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section><!-- /Find A Doctor Section -->
-<!-- Call To Action Section -->
-<section id="call-to-action" class="call-to-action section">
-    <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <h2 data-aos="fade-up" data-aos-delay="200">Agenda tu cita en minutos</h2>
-                <p data-aos="fade-up" data-aos-delay="250">
-                    Selecciona especialidad, elige tu médico y confirma tu horario. Recibirás un recordatorio con los detalles de tu cita.
-                </p>
-
-                <div class="cta-buttons" data-aos="fade-up" data-aos-delay="300">
-                    <a href="appointment.html" class="btn-primary">Agendar ahora</a>
-                    <a href="services.html" class="btn-secondary">Ver especialidades</a>
                 </div>
             </div>
         </div>
+    </div>
+</section>
 
-        <div class="row features-row" data-aos="fade-up" data-aos-delay="400">
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="feature-card">
-                    <div class="icon-wrapper">
+<!-- wave de departamentos → médicos -->
+<div class="wave-divider" style="background:#040d1a;">
+    <svg viewBox="0 0 1440 48" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,0 C480,48 960,48 1440,0 L1440,48 L0,48 Z" fill="#071428"/>
+        <path d="M0,0 C480,48 960,48 1440,0" fill="none" stroke="rgba(13,148,136,.12)" stroke-width="1.5"/>
+    </svg>
+</div>
+
+<!-- ══════════════════════════════════════════ MÉDICOS -->
+<section id="find-a-doctor" class="sec sec-dark2" style="padding-top:48px;">
+    <div class="container">
+        <div class="sh" data-aos="fade-up">
+            <h2>Nuestros médicos</h2>
+            <p>Profesionales con experiencia y atención centrada en el paciente</p>
+            <div class="sh-bar"></div>
+        </div>
+        <div class="row gy-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="doc">
+                    <div class="di">
+                        <img src="img/Health/staff-3.webp" alt="Dra. Sarah Mitchell">
+                        <span class="avail on">Disponible</span>
+                        <div class="doc-overlay">
+                            <div class="doc-overlay-info">
+                                <p>Próxima disponibilidad</p>
+                                <div class="schedule"><i class="bi bi-clock"></i> Hoy · 2:00 PM – 6:00 PM</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="db">
+                        <h5>Dra. Sarah Mitchell <i class="bi bi-patch-check-fill verified"></i></h5>
+                        <p class="ds">Cardiología</p>
+                        <p class="de">15+ años de experiencia</p>
+                        <div class="stars">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i><span>(4.9)</span>
+                        </div>
+                        <div class="dac">
+                            <a href="/Home/IniciarSesion" class="btn-dp">Ver perfil</a>
+                            <a href="/Home/IniciarSesion" class="btn-dc">Agendar cita</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="doc">
+                    <div class="di">
+                        <img src="img/Health/staff-7.webp" alt="Dr. Michael Rodriguez">
+                        <span class="avail off">Ocupado</span>
+                        <div class="doc-overlay">
+                            <div class="doc-overlay-info">
+                                <p>Próxima disponibilidad</p>
+                                <div class="schedule"><i class="bi bi-clock"></i> Mañana · 8:00 AM – 12:00 PM</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="db">
+                        <h5>Dr. Michael Rodriguez <i class="bi bi-patch-check-fill verified"></i></h5>
+                        <p class="ds">Neurología</p>
+                        <p class="de">12+ años de experiencia</p>
+                        <div class="stars">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-half"></i><span>(4.7)</span>
+                        </div>
+                        <div class="dac">
+                            <a href="/Home/IniciarSesion" class="btn-dp">Ver perfil</a>
+                            <a href="/Home/IniciarSesion" class="btn-dc">Agendar cita</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="doc">
+                    <div class="di">
+                        <img src="img/Health/staff-1.webp" alt="Dra. Emily Chen">
+                        <span class="avail on">Disponible</span>
+                        <div class="doc-overlay">
+                            <div class="doc-overlay-info">
+                                <p>Próxima disponibilidad</p>
+                                <div class="schedule"><i class="bi bi-clock"></i> Hoy · 3:00 PM – 7:00 PM</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="db">
+                        <h5>Dra. Emily Chen <i class="bi bi-patch-check-fill verified"></i></h5>
+                        <p class="ds">Pediatría</p>
+                        <p class="de">8+ años de experiencia</p>
+                        <div class="stars">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i><span>(5.0)</span>
+                        </div>
+                        <div class="dac">
+                            <a href="/Home/IniciarSesion" class="btn-dp">Ver perfil</a>
+                            <a href="/Home/IniciarSesion" class="btn-dc">Agendar cita</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- wave de médicos → testimonios -->
+<div class="wave-divider" style="background:#040d1a;">
+    <svg viewBox="0 0 1440 48" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,48 C360,0 1080,0 1440,48 L1440,0 L0,0 Z" fill="#071428"/>
+        <path d="M0,48 C360,0 1080,0 1440,48" fill="none" stroke="rgba(13,148,136,.12)" stroke-width="1.5"/>
+    </svg>
+</div>
+
+<!-- ══════════════════════════════════════════ TESTIMONIOS -->
+<section class="sec sec-dark" style="padding-top:48px;">
+    <div class="container">
+        <div class="sh" data-aos="fade-up">
+            <h2>Lo que dicen nuestros pacientes</h2>
+            <p>Experiencias reales de personas que confían en nuestro equipo</p>
+            <div class="sh-bar"></div>
+        </div>
+        <div class="row gy-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="tcard">
+                    <div class="tcard-quote">"</div>
+                    <p>El proceso para agendar fue increíblemente sencillo. La Dra. Mitchell me atendió con mucha dedicación y claridad. Sin duda regresaré.</p>
+                    <div class="tcard-author">
+                        <div class="tcard-avatar">AM</div>
+                        <div class="tcard-info">
+                            <div class="tcard-stars">
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                            <strong>Ana Morales</strong>
+                            <span>Paciente · Cardiología</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="tcard">
+                    <div class="tcard-quote">"</div>
+                    <p>Excelente atención del Dr. Rodriguez. Me explicó todo con paciencia y el seguimiento posterior fue muy profesional. Totalmente recomendado.</p>
+                    <div class="tcard-author">
+                        <div class="tcard-avatar">CR</div>
+                        <div class="tcard-info">
+                            <div class="tcard-stars">
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                            <strong>Carlos Ruiz</strong>
+                            <span>Paciente · Neurología</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="tcard">
+                    <div class="tcard-quote">"</div>
+                    <p>La Dra. Chen es maravillosa con los niños. Mi hijo quedó tranquilo desde el primer momento. La plataforma es muy fácil de usar.</p>
+                    <div class="tcard-author">
+                        <div class="tcard-avatar">LV</div>
+                        <div class="tcard-info">
+                            <div class="tcard-stars">
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                            <strong>Laura Vega</strong>
+                            <span>Paciente · Pediatría</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- wave de testimonios → CTA -->
+<div class="wave-divider" style="background:#071428;">
+    <svg viewBox="0 0 1440 48" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,0 C360,48 1080,48 1440,0 L1440,48 L0,48 Z" fill="#040d1a"/>
+        <path d="M0,0 C360,48 1080,48 1440,0" fill="none" stroke="rgba(13,148,136,.12)" stroke-width="1.5"/>
+    </svg>
+</div>
+
+<!-- ══════════════════════════════════════════ CTA -->
+<section class="sec sec-dark2" style="padding-top:48px;">
+    <div class="container">
+        <div class="cta-box" data-aos="fade-up">
+            <div class="cta-grid"></div>
+            <div class="cta-inner">
+                <h2>Agenda tu cita en minutos</h2>
+                <p>Selecciona especialidad, elige tu médico y confirma tu horario. Recibirás un recordatorio con todos los detalles.</p>
+                <div class="cta-btns">
+                    <a href="/Home/IniciarSesion" class="btn-cm">Agendar ahora</a>
+                    <a href="#featured-departments" class="btn-cg">Ver especialidades</a>
+                </div>
+                <div class="cta-feats">
+                    <a href="/Home/IniciarSesion" class="cta-feat">
                         <i class="bi bi-calendar-check"></i>
-                    </div>
-                    <h5>Citas en línea</h5>
-                    <p>Agendamiento rápido con disponibilidad visible y confirmación inmediata.</p>
-                    <a href="appointment.html" class="feature-link">
-                        <span>Agendar</span>
-                        <i class="bi bi-arrow-right"></i>
+                        <h6>Citas en línea</h6>
+                        <p>Disponibilidad visible y confirmación inmediata</p>
                     </a>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="feature-card">
-                    <div class="icon-wrapper">
+                    <a href="#find-a-doctor" class="cta-feat">
                         <i class="bi bi-shield-check"></i>
-                    </div>
-                    <h5>Atención segura</h5>
-                    <p>Buenas prácticas de privacidad y procesos claros de atención al paciente.</p>
-                    <a href="about.html" class="feature-link">
-                        <span>Conocer</span>
-                        <i class="bi bi-arrow-right"></i>
+                        <h6>Atención segura</h6>
+                        <p>Privacidad y procesos claros de atención</p>
                     </a>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="feature-card">
-                    <div class="icon-wrapper">
+                    <a href="/Home/Contacto" class="cta-feat">
                         <i class="bi bi-chat-dots"></i>
-                    </div>
-                    <h5>Soporte</h5>
-                    <p>Canales de ayuda para dudas de citas, requisitos y orientación general.</p>
-                    <a href="contact.html" class="feature-link">
-                        <span>Contactar</span>
-                        <i class="bi bi-arrow-right"></i>
+                        <h6>Soporte</h6>
+                        <p>Ayuda para dudas de citas y requisitos</p>
                     </a>
                 </div>
             </div>
         </div>
-
     </div>
-</section><!-- /Call To Action Section -->
+</section>
+
+<!-- ══════════════════════════════════════════ SCRIPTS -->
+<script>
+// ── Counter animation ──────────────────────────────────
+const counters = document.querySelectorAll('.counter');
+const speed = 1800;
+
+const animateCounter = (el) => {
+    const target = +el.getAttribute('data-target');
+    const increment = target / (speed / 16);
+    let current = 0;
+    const update = () => {
+        current += increment;
+        if (current < target) {
+            el.textContent = Math.ceil(current);
+            requestAnimationFrame(update);
+        } else {
+            el.textContent = target;
+        }
+    };
+    update();
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateCounter(entry.target);
+            observer.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.5 });
+
+counters.forEach(c => observer.observe(c));
+</script>

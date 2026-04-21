@@ -218,8 +218,23 @@ namespace Proyecto_PWA_Clinica.Controllers
                 return RedirectToAction("IniciarSesion", "Home");
             }
 
-            ModelState.AddModelError("", "No fue posible registrar el usuario.");
-            ViewBag.MensajeErrorApi = resultado.Item2;
+            // Traducir errores técnicos de BD a mensajes amigables para el usuario
+            string mensajeError = resultado.Item2 ?? "Error desconocido.";
+            string mensajeAmigable;
+
+            if (mensajeError.Contains("FOREIGN KEY") || mensajeError.Contains("FK_"))
+                mensajeAmigable = "Error de configuración interna. Contacte al administrador del sistema.";
+            else if (mensajeError.Contains("UNIQUE") || mensajeError.Contains("duplicate key") || mensajeError.Contains("Duplicate"))
+                mensajeAmigable = "El correo electrónico o la cédula ingresada ya está registrada. Intente con otro.";
+            else if (mensajeError.Contains("NULL") || mensajeError.Contains("cannot be null"))
+                mensajeAmigable = "Faltan datos obligatorios. Verifique todos los campos del formulario.";
+            else if (mensajeError.Contains("timeout") || mensajeError.Contains("connection"))
+                mensajeAmigable = "No fue posible conectar con el servidor. Intente nuevamente en unos momentos.";
+            else
+                mensajeAmigable = "No fue posible completar el registro. Por favor intente nuevamente.";
+
+            ModelState.AddModelError("", mensajeAmigable);
+            ViewBag.MensajeErrorApi = mensajeAmigable;
             return View(model);
         }
 

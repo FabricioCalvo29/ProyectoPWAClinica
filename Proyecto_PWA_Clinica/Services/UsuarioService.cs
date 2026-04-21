@@ -23,6 +23,7 @@ namespace Proyecto_PWA_Clinica.Services
                 model.Apellido,
                 model.Correo,
                 Contrasena = model.Contrasena,
+                model.Cedula,
                 model.FechaNacimiento,
                 model.Telefono,
                 model.TipoSangre,

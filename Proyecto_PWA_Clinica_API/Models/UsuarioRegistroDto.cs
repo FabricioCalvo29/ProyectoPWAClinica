@@ -11,6 +11,9 @@ namespace Proyecto_PWA_Clinica_API.Models
         public string Apellido { get; set; } = string.Empty;
 
         [Required]
+        public string Cedula { get; set; } = string.Empty;
+
+        [Required]
         [EmailAddress]
         public string Correo { get; set; } = string.Empty;
 
