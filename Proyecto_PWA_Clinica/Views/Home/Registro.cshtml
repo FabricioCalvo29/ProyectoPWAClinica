@@ -6,317 +6,285 @@
 }
 
 <style>
-    .registro-wrapper {
-        min-height: 100vh;
-        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f0fdf4 100%);
-        padding: 80px 16px 40px;
-    }
+body { background-color: #040d1a !important; }
 
-    .registro-card {
-        background: #fff;
-        border-radius: 20px;
-        box-shadow: 0 8px 40px rgba(0,0,0,.10);
-        overflow: hidden;
-        max-width: 680px;
-        margin: 0 auto;
-    }
+.auth-page {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 100px 16px 60px;
+    background: #040d1a;
+    position: relative; overflow: hidden;
+}
+.auth-page::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(13,148,136,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(13,148,136,.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+}
+.auth-glow {
+    position: absolute; width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(13,148,136,.1) 0%, transparent 70%);
+    top: -150px; right: -150px; pointer-events: none;
+}
+.auth-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 24px; overflow: hidden;
+    width: 100%; max-width: 700px;
+    position: relative; z-index: 1;
+    box-shadow: 0 32px 80px rgba(0,0,0,.4);
+}
+.auth-header {
+    background: linear-gradient(135deg, rgba(13,148,136,.25) 0%, rgba(8,30,60,.6) 100%);
+    border-bottom: 1px solid rgba(13,148,136,.2);
+    padding: 36px 40px 28px; text-align: center;
+}
+.auth-icon {
+    width: 60px; height: 60px;
+    background: rgba(13,148,136,.2); border: 1.5px solid rgba(13,148,136,.4);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px; font-size: 1.5rem; color: #0d9488;
+}
+.auth-header h1 { font-size: 1.6rem; font-weight: 800; color: #fff; margin-bottom: 6px; }
+.auth-header p  { color: rgba(255,255,255,.5); font-size: .9rem; margin: 0; }
 
-    .registro-header {
-        background: linear-gradient(135deg, #0d9488 0%, #0891b2 100%);
-        padding: 36px 40px 28px;
-        text-align: center;
-        color: #fff;
-    }
+.auth-body { padding: 36px 40px 40px; }
 
-    .registro-header .icon-circle {
-        width: 64px; height: 64px;
-        background: rgba(255,255,255,.18);
-        border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        margin: 0 auto 14px;
-        font-size: 1.8rem;
-    }
+.section-divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 28px 0 20px;
+}
+.section-divider span {
+    font-size: .72rem; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: #0d9488; white-space: nowrap;
+}
+.section-divider::before,
+.section-divider::after {
+    content: ''; flex: 1; height: 1px;
+    background: rgba(255,255,255,.08);
+}
 
-    .registro-header h1 {
-        font-size: 1.7rem;
-        font-weight: 700;
-        margin-bottom: 6px;
-    }
+.auth-label {
+    display: block; font-size: .8rem; font-weight: 700;
+    color: rgba(255,255,255,.55); letter-spacing: .04em;
+    text-transform: uppercase; margin-bottom: 7px;
+}
+.auth-input-wrap { position: relative; }
+.auth-input-wrap .bi {
+    position: absolute; left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,.25); font-size: .95rem; pointer-events: none;
+}
+.auth-input,
+.auth-select {
+    width: 100%;
+    background: rgba(255,255,255,.06);
+    border: 1.5px solid rgba(255,255,255,.1);
+    border-radius: 12px;
+    padding: 11px 14px 11px 40px;
+    color: #fff; font-size: .9rem;
+    transition: border-color .2s, background .2s; outline: none;
+    appearance: none;
+}
+.auth-select option { background: #071428; color: #fff; }
+.auth-input::placeholder { color: rgba(255,255,255,.2); }
+.auth-input:focus, .auth-select:focus {
+    border-color: rgba(13,148,136,.6);
+    background: rgba(13,148,136,.07);
+}
+.auth-textarea {
+    width: 100%;
+    background: rgba(255,255,255,.06);
+    border: 1.5px solid rgba(255,255,255,.1);
+    border-radius: 12px;
+    padding: 11px 14px;
+    color: #fff; font-size: .9rem; resize: vertical;
+    transition: border-color .2s, background .2s; outline: none;
+}
+.auth-textarea::placeholder { color: rgba(255,255,255,.2); }
+.auth-textarea:focus {
+    border-color: rgba(13,148,136,.6);
+    background: rgba(13,148,136,.07);
+}
+.field-wrap { margin-bottom: 16px; }
+.field-error { color: #f87171; font-size: .78rem; margin-top: 4px; display: block; }
 
-    .registro-header p {
-        opacity: .88;
-        font-size: .95rem;
-        margin: 0;
-    }
+.auth-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; background: #0d9488; color: #fff;
+    border: none; border-radius: 12px;
+    padding: 13px; font-size: .95rem; font-weight: 700;
+    cursor: pointer; transition: background .2s, transform .15s; margin-top: 8px;
+}
+.auth-btn:hover { background: #0f766e; transform: translateY(-1px); }
 
-    .registro-body {
-        padding: 36px 40px 40px;
-    }
+.auth-links { text-align: center; margin-top: 24px; }
+.auth-links p { color: rgba(255,255,255,.4); font-size: .87rem; margin: 0; }
+.auth-links a { color: #0d9488; font-weight: 600; text-decoration: none; }
+.auth-links a:hover { color: #14b8a6; }
 
-    .section-divider {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin: 28px 0 20px;
-    }
+.auth-alert-error {
+    background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3);
+    border-radius: 10px; padding: 12px 16px;
+    color: #fca5a5; font-size: .88rem; margin-bottom: 20px;
+}
+.auth-alert-success {
+    background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3);
+    border-radius: 10px; padding: 12px 16px;
+    color: #86efac; font-size: .88rem; margin-bottom: 20px;
+}
 
-    .section-divider span {
-        font-weight: 600;
-        font-size: .8rem;
-        text-transform: uppercase;
-        letter-spacing: .08em;
-        color: #0d9488;
-        white-space: nowrap;
-    }
-
-    .section-divider::before,
-    .section-divider::after {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background: #e5e7eb;
-    }
-
-    .form-label {
-        font-weight: 600;
-        font-size: .875rem;
-        color: #374151;
-        margin-bottom: 6px;
-    }
-
-    .form-control, .form-select {
-        border: 1.5px solid #d1d5db;
-        border-radius: 10px;
-        padding: 10px 14px;
-        font-size: .9rem;
-        transition: border-color .2s, box-shadow .2s;
-    }
-
-    .form-control:focus, .form-select:focus {
-        border-color: #0d9488;
-        box-shadow: 0 0 0 3px rgba(13,148,136,.12);
-        outline: none;
-    }
-
-    .input-icon-wrapper {
-        position: relative;
-    }
-
-    .input-icon-wrapper .bi {
-        position: absolute;
-        left: 13px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #9ca3af;
-        font-size: 1rem;
-        pointer-events: none;
-    }
-
-    .input-icon-wrapper .form-control,
-    .input-icon-wrapper .form-select {
-        padding-left: 38px;
-    }
-
-    .btn-registro {
-        background: linear-gradient(135deg, #0d9488, #0891b2);
-        color: #fff;
-        border: none;
-        border-radius: 12px;
-        padding: 13px 28px;
-        font-size: 1rem;
-        font-weight: 600;
-        width: 100%;
-        transition: opacity .2s, transform .15s;
-    }
-
-    .btn-registro:hover {
-        opacity: .92;
-        transform: translateY(-1px);
-        color: #fff;
-    }
-
-    .alert-danger-custom {
-        background: #fef2f2;
-        border: 1px solid #fecaca;
-        border-radius: 10px;
-        padding: 14px 16px;
-        color: #b91c1c;
-        font-size: .9rem;
-    }
-
-    .alert-success-custom {
-        background: #f0fdf4;
-        border: 1px solid #bbf7d0;
-        border-radius: 10px;
-        padding: 14px 16px;
-        color: #15803d;
-        font-size: .9rem;
-    }
-
-    @@media (max-width: 576px) {
-        .registro-body { padding: 24px 20px 28px; }
-        .registro-header { padding: 28px 20px 22px; }
-    }
+@@media (max-width: 576px) {
+    .auth-body { padding: 24px 20px 28px; }
+    .auth-header { padding: 28px 20px 22px; }
+}
 </style>
 
-<div class="registro-wrapper">
-    <div class="registro-card">
-        <div class="registro-header">
-            <div class="icon-circle">
-                <i class="bi bi-person-plus-fill"></i>
-            </div>
+<div class="auth-page">
+    <div class="auth-glow"></div>
+    <div class="auth-card" data-aos="fade-up">
+        <div class="auth-header">
+            <div class="auth-icon"><i class="bi bi-person-plus-fill"></i></div>
             <h1>Crear cuenta</h1>
             <p>Completa el formulario para acceder al portal de pacientes</p>
         </div>
+        <div class="auth-body">
 
-        <div class="registro-body">
             <form asp-action="Registro" asp-controller="Home" method="post">
                 @Html.AntiForgeryToken()
 
                 @if (ViewBag.MensajeExito != null)
                 {
-                    <div class="alert-success-custom mb-4">
+                    <div class="auth-alert-success">
                         <i class="bi bi-check-circle-fill me-2"></i>@ViewBag.MensajeExito
                     </div>
                 }
-
                 @if (ViewBag.MensajeErrorApi != null)
                 {
-                    <div class="alert-danger-custom mb-3">
+                    <div class="auth-alert-error">
                         <i class="bi bi-exclamation-triangle-fill me-2"></i>@ViewBag.MensajeErrorApi
                     </div>
                 }
-
-                <div asp-validation-summary="ModelOnly" class="alert-danger-custom mb-3"></div>
+                <div asp-validation-summary="ModelOnly" class="auth-alert-error"></div>
 
                 <!-- DATOS PERSONALES -->
                 <div class="section-divider"><span>Datos personales</span></div>
 
                 <div class="row g-3">
-                    <div class="col-md-6 mb-1">
-                        <label asp-for="Nombre" class="form-label"></label>
-                        <div class="input-icon-wrapper">
+                    <div class="col-md-6 field-wrap">
+                        <label asp-for="Nombre" class="auth-label"></label>
+                        <div class="auth-input-wrap">
                             <i class="bi bi-person"></i>
-                            <input asp-for="Nombre" class="form-control" placeholder="Ej. Juan" />
+                            <input asp-for="Nombre" class="auth-input" placeholder="Ej. Juan" />
                         </div>
-                        <span asp-validation-for="Nombre" class="text-danger small"></span>
+                        <span asp-validation-for="Nombre" class="field-error"></span>
                     </div>
-
-                    <div class="col-md-6 mb-1">
-                        <label asp-for="Apellido" class="form-label"></label>
-                        <div class="input-icon-wrapper">
+                    <div class="col-md-6 field-wrap">
+                        <label asp-for="Apellido" class="auth-label"></label>
+                        <div class="auth-input-wrap">
                             <i class="bi bi-person"></i>
-                            <input asp-for="Apellido" class="form-control" placeholder="Ej. Pérez" />
+                            <input asp-for="Apellido" class="auth-input" placeholder="Ej. Pérez" />
                         </div>
-                        <span asp-validation-for="Apellido" class="text-danger small"></span>
+                        <span asp-validation-for="Apellido" class="field-error"></span>
                     </div>
-                </div>
-
-                <div class="row g-3 mt-0">
-                    <div class="col-md-6 mb-1">
-                        <label asp-for="Cedula" class="form-label"></label>
-                        <div class="input-icon-wrapper">
-                            <i class="bi bi-card-text"></i>
-                            <input asp-for="Cedula" class="form-control" placeholder="Ej. 1-0000-0000" />
-                        </div>
-                        <span asp-validation-for="Cedula" class="text-danger small"></span>
-                    </div>
-
-                    <div class="col-md-6 mb-1">
-                        <label asp-for="FechaNacimiento" class="form-label"></label>
-                        <div class="input-icon-wrapper">
-                            <i class="bi bi-calendar3"></i>
-                            <input asp-for="FechaNacimiento" type="date" class="form-control" />
-                        </div>
-                        <span asp-validation-for="FechaNacimiento" class="text-danger small"></span>
-                    </div>
-                </div>
-
-                <div class="row g-3 mt-0">
-                    <div class="col-md-6 mb-1">
-                        <label asp-for="Telefono" class="form-label"></label>
-                        <div class="input-icon-wrapper">
-                            <i class="bi bi-telephone"></i>
-                            <input asp-for="Telefono" class="form-control" placeholder="Ej. 8888-8888" />
-                        </div>
-                        <span asp-validation-for="Telefono" class="text-danger small"></span>
-                    </div>
-
-                    <div class="col-md-6 mb-1">
-                        <label asp-for="TipoSangre" class="form-label"></label>
-                        <div class="input-icon-wrapper">
-                            <i class="bi bi-droplet-half"></i>
-                            <select asp-for="TipoSangre" class="form-select">
-                                <option value="">Seleccione</option>
-                                <option>A+</option>
-                                <option>A-</option>
-                                <option>B+</option>
-                                <option>B-</option>
-                                <option>AB+</option>
-                                <option>AB-</option>
-                                <option>O+</option>
-                                <option>O-</option>
-                            </select>
-                        </div>
-                        <span asp-validation-for="TipoSangre" class="text-danger small"></span>
-                    </div>
-                </div>
-
-                <!-- CUENTA -->
-                <div class="section-divider"><span>Datos de acceso</span></div>
-
-                <div class="mb-3">
-                    <label asp-for="Correo" class="form-label"></label>
-                    <div class="input-icon-wrapper">
-                        <i class="bi bi-envelope"></i>
-                        <input asp-for="Correo" class="form-control" placeholder="correo@ejemplo.com" />
-                    </div>
-                    <span asp-validation-for="Correo" class="text-danger small"></span>
                 </div>
 
                 <div class="row g-3">
-                    <div class="col-md-6 mb-1">
-                        <label asp-for="Contrasena" class="form-label"></label>
-                        <div class="input-icon-wrapper">
-                            <i class="bi bi-lock"></i>
-                            <input asp-for="Contrasena" type="password" class="form-control" placeholder="Mínimo 6 caracteres" />
+                    <div class="col-md-6 field-wrap">
+                        <label asp-for="Cedula" class="auth-label"></label>
+                        <div class="auth-input-wrap">
+                            <i class="bi bi-card-text"></i>
+                            <input asp-for="Cedula" class="auth-input" placeholder="Ej. 1-0000-0000" />
                         </div>
-                        <span asp-validation-for="Contrasena" class="text-danger small"></span>
+                        <span asp-validation-for="Cedula" class="field-error"></span>
                     </div>
-
-                    <div class="col-md-6 mb-1">
-                        <label asp-for="ConfirmarContrasena" class="form-label"></label>
-                        <div class="input-icon-wrapper">
-                            <i class="bi bi-lock-fill"></i>
-                            <input asp-for="ConfirmarContrasena" type="password" class="form-control" placeholder="Repite la contraseña" />
+                    <div class="col-md-6 field-wrap">
+                        <label asp-for="FechaNacimiento" class="auth-label"></label>
+                        <div class="auth-input-wrap">
+                            <i class="bi bi-calendar3"></i>
+                            <input asp-for="FechaNacimiento" type="date" class="auth-input" />
                         </div>
-                        <span asp-validation-for="ConfirmarContrasena" class="text-danger small"></span>
+                        <span asp-validation-for="FechaNacimiento" class="field-error"></span>
                     </div>
                 </div>
 
-                <!-- HISTORIAL -->
+                <div class="row g-3">
+                    <div class="col-md-6 field-wrap">
+                        <label asp-for="Telefono" class="auth-label"></label>
+                        <div class="auth-input-wrap">
+                            <i class="bi bi-telephone"></i>
+                            <input asp-for="Telefono" class="auth-input" placeholder="Ej. 8888-8888" />
+                        </div>
+                        <span asp-validation-for="Telefono" class="field-error"></span>
+                    </div>
+                    <div class="col-md-6 field-wrap">
+                        <label asp-for="TipoSangre" class="auth-label"></label>
+                        <div class="auth-input-wrap">
+                            <i class="bi bi-droplet-half"></i>
+                            <select asp-for="TipoSangre" class="auth-select">
+                                <option value="">Seleccione</option>
+                                <option>A+</option><option>A-</option>
+                                <option>B+</option><option>B-</option>
+                                <option>AB+</option><option>AB-</option>
+                                <option>O+</option><option>O-</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="TipoSangre" class="field-error"></span>
+                    </div>
+                </div>
+
+                <!-- DATOS DE ACCESO -->
+                <div class="section-divider"><span>Datos de acceso</span></div>
+
+                <div class="field-wrap">
+                    <label asp-for="Correo" class="auth-label"></label>
+                    <div class="auth-input-wrap">
+                        <i class="bi bi-envelope"></i>
+                        <input asp-for="Correo" class="auth-input" placeholder="correo@ejemplo.com" />
+                    </div>
+                    <span asp-validation-for="Correo" class="field-error"></span>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6 field-wrap">
+                        <label asp-for="Contrasena" class="auth-label"></label>
+                        <div class="auth-input-wrap">
+                            <i class="bi bi-lock"></i>
+                            <input asp-for="Contrasena" type="password" class="auth-input" placeholder="Mínimo 6 caracteres" />
+                        </div>
+                        <span asp-validation-for="Contrasena" class="field-error"></span>
+                    </div>
+                    <div class="col-md-6 field-wrap">
+                        <label asp-for="ConfirmarContrasena" class="auth-label"></label>
+                        <div class="auth-input-wrap">
+                            <i class="bi bi-lock-fill"></i>
+                            <input asp-for="ConfirmarContrasena" type="password" class="auth-input" placeholder="Repite la contraseña" />
+                        </div>
+                        <span asp-validation-for="ConfirmarContrasena" class="field-error"></span>
+                    </div>
+                </div>
+
+                <!-- INFO MÉDICA -->
                 <div class="section-divider"><span>Información médica (opcional)</span></div>
 
-                <div class="mb-4">
-                    <label asp-for="HistorialMedico" class="form-label"></label>
-                    <textarea asp-for="HistorialMedico" class="form-control" rows="3"
+                <div class="field-wrap" style="margin-bottom: 28px;">
+                    <label asp-for="HistorialMedico" class="auth-label"></label>
+                    <textarea asp-for="HistorialMedico" class="auth-textarea" rows="3"
                               placeholder="Alergias, enfermedades crónicas, medicamentos actuales..."></textarea>
-                    <span asp-validation-for="HistorialMedico" class="text-danger small"></span>
+                    <span asp-validation-for="HistorialMedico" class="field-error"></span>
                 </div>
 
-                <button type="submit" class="btn-registro">
-                    <i class="bi bi-person-check-fill me-2"></i>Crear cuenta
+                <button type="submit" class="auth-btn">
+                    <i class="bi bi-person-check-fill"></i> Crear cuenta
                 </button>
-
-                <div class="text-center mt-4">
-                    <p class="mb-0 text-muted" style="font-size:.9rem;">
-                        ¿Ya tienes cuenta?
-                        <a asp-controller="Home" asp-action="IniciarSesion" style="color:#0d9488; font-weight:600;">
-                            Inicia sesión aquí
-                        </a>
-                    </p>
-                </div>
             </form>
+
+            <div class="auth-links">
+                <p>¿Ya tienes cuenta? <a asp-controller="Home" asp-action="IniciarSesion">Inicia sesión aquí</a></p>
+            </div>
         </div>
     </div>
 </div>

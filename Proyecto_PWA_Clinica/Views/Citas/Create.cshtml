@@ -6,68 +6,193 @@
     var errorMedicos = ViewBag.ErrorMedicos as string ?? string.Empty;
 }
 
-<div class="container mt-5 pt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow p-4">
-                <div class="mb-4">
-                    <h1 class="h3">Agendar cita</h1>
-                    <p class="mb-0">Registra una nueva cita medica.</p>
-                </div>
+<style>
+body { background-color: #040d1a !important; }
+
+.page-wrap {
+    min-height: 100vh;
+    background: #040d1a;
+    padding: 100px 0 60px;
+    position: relative;
+}
+.page-wrap::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(13,148,136,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(13,148,136,.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+}
+
+.form-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 24px; overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,.35);
+    position: relative; z-index: 1;
+}
+.form-card-header {
+    background: linear-gradient(135deg, rgba(13,148,136,.2) 0%, rgba(8,30,60,.5) 100%);
+    border-bottom: 1px solid rgba(13,148,136,.2);
+    padding: 32px 36px 26px;
+}
+.form-card-header h1 { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+.form-card-header p  { color: rgba(255,255,255,.45); font-size: .9rem; margin: 0; }
+.form-card-header .header-icon {
+    width: 52px; height: 52px; border-radius: 16px;
+    background: rgba(13,148,136,.2); border: 1.5px solid rgba(13,148,136,.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; color: #0d9488; margin-bottom: 16px;
+}
+.form-card-body { padding: 32px 36px 36px; }
+
+.form-label-dark {
+    display: block; font-size: .8rem; font-weight: 700;
+    color: rgba(255,255,255,.55); letter-spacing: .05em;
+    text-transform: uppercase; margin-bottom: 8px;
+}
+.form-input-wrap { position: relative; }
+.form-input-wrap .bi {
+    position: absolute; left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,.25); font-size: .95rem; pointer-events: none;
+}
+.form-input-wrap.top-icon .bi { top: 18px; transform: none; }
+
+.dark-input,
+.dark-select,
+.dark-textarea {
+    width: 100%;
+    background: rgba(255,255,255,.06);
+    border: 1.5px solid rgba(255,255,255,.1);
+    border-radius: 12px;
+    padding: 12px 14px 12px 42px;
+    color: #fff; font-size: .9rem;
+    transition: border-color .2s, background .2s; outline: none;
+}
+.dark-select { appearance: none; }
+.dark-select option { background: #071428; color: #fff; }
+.dark-textarea { padding: 12px 14px; resize: vertical; min-height: 110px; }
+.dark-input::placeholder,
+.dark-textarea::placeholder { color: rgba(255,255,255,.2); }
+.dark-input:focus,
+.dark-select:focus,
+.dark-textarea:focus {
+    border-color: rgba(13,148,136,.6);
+    background: rgba(13,148,136,.07);
+}
+.dark-input:disabled,
+.dark-select:disabled { opacity: .5; cursor: not-allowed; }
+
+.field-wrap { margin-bottom: 22px; }
+.field-error { color: #f87171; font-size: .78rem; margin-top: 5px; display: block; }
+
+.dark-alert {
+    border-radius: 12px; padding: 14px 18px;
+    font-size: .9rem; margin-bottom: 24px;
+    display: flex; align-items: center; gap: 10px;
+}
+.dark-alert.danger  { background: rgba(239,68,68,.1);  border: 1px solid rgba(239,68,68,.3);  color: #fca5a5; }
+.dark-alert.warning { background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.3); color: #fcd34d; }
+
+.form-actions { display: flex; gap: 12px; align-items: center; }
+.btn-primary-dark {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #0d9488; color: #fff;
+    border: none; border-radius: 12px;
+    padding: 12px 28px; font-size: .9rem; font-weight: 700;
+    cursor: pointer; transition: background .2s, transform .15s; text-decoration: none;
+}
+.btn-primary-dark:hover { background: #0f766e; color: #fff; transform: translateY(-1px); }
+.btn-primary-dark:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent; color: rgba(255,255,255,.5);
+    border: 1.5px solid rgba(255,255,255,.15); border-radius: 12px;
+    padding: 12px 22px; font-size: .9rem; font-weight: 600;
+    cursor: pointer; transition: border-color .2s, color .2s; text-decoration: none;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,.35); color: #fff; }
+</style>
+
+<div class="page-wrap">
+    <div class="container" style="max-width: 640px;">
+        <div class="form-card" data-aos="fade-up">
+
+            <div class="form-card-header">
+                <div class="header-icon"><i class="bi bi-calendar-plus"></i></div>
+                <h1>Agendar cita</h1>
+                <p>Registra una nueva cita médica con nuestros especialistas</p>
+            </div>
+
+            <div class="form-card-body">
 
                 @if (!string.IsNullOrWhiteSpace(errorMedicos))
                 {
-                    <div class="alert alert-danger">
-                        @errorMedicos
-                    </div>
+                    <div class="dark-alert danger"><i class="bi bi-exclamation-triangle-fill"></i> @errorMedicos</div>
                 }
-
                 @if (!medicos.Any())
                 {
-                    <div class="alert alert-warning">
-                        No hay medicos activos disponibles para agendar citas.
-                    </div>
+                    <div class="dark-alert warning"><i class="bi bi-info-circle-fill"></i> No hay médicos activos disponibles para agendar citas.</div>
                 }
 
                 <form asp-action="Create" asp-controller="Citas" method="post">
                     @Html.AntiForgeryToken()
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div asp-validation-summary="ModelOnly" class="dark-alert danger"></div>
 
-                    <div class="mb-3">
-                        <label asp-for="IdMedico" class="form-label">Medico</label>
-                        <select asp-for="IdMedico" class="form-select">
-                            <option value="0">Seleccione un medico</option>
-                            @foreach (var medico in medicos)
-                            {
-                                <option value="@medico.IdMedico">
-                                    @medico.NombreMedico - @medico.Especialidad
-                                </option>
-                            }
-                        </select>
-                        <span asp-validation-for="IdMedico" class="text-danger"></span>
+                    <div class="field-wrap">
+                        <label asp-for="IdMedico" class="form-label-dark">Médico</label>
+                        <div class="form-input-wrap">
+                            <i class="bi bi-person-badge"></i>
+                            <select asp-for="IdMedico" class="dark-select">
+                                <option value="0">Seleccione un médico</option>
+                                @foreach (var medico in medicos)
+                                {
+                                    <option value="@medico.IdMedico">@medico.NombreMedico — @medico.Especialidad</option>
+                                }
+                            </select>
+                        </div>
+                        <span asp-validation-for="IdMedico" class="field-error"></span>
                     </div>
 
-                    <div class="mb-3">
-                        <label asp-for="FechaHora" class="form-label">Fecha y hora</label>
-                        <input asp-for="FechaHora" asp-format="{0:yyyy-MM-ddTHH:mm}" type="datetime-local" step="60" class="form-control" />
-                        <span asp-validation-for="FechaHora" class="text-danger"></span>
+                    <div class="field-wrap">
+                        <label asp-for="FechaHora" class="form-label-dark">Fecha y hora</label>
+                        <div class="form-input-wrap">
+                            <i class="bi bi-clock"></i>
+                            <input asp-for="FechaHora"
+                                   asp-format="{0:yyyy-MM-ddTHH:mm}"
+                                   type="datetime-local" step="60"
+                                   class="dark-input" />
+                        </div>
+                        <span asp-validation-for="FechaHora" class="field-error"></span>
                     </div>
 
-                    <div class="mb-4">
-                        <label asp-for="Motivo" class="form-label">Motivo</label>
-                        <textarea asp-for="Motivo" class="form-control" rows="4"></textarea>
-                        <span asp-validation-for="Motivo" class="text-danger"></span>
+                    <div class="field-wrap">
+                        <label asp-for="Motivo" class="form-label-dark">Motivo de la consulta</label>
+                        <div class="form-input-wrap top-icon">
+                            <i class="bi bi-card-text"></i>
+                            <textarea asp-for="Motivo" class="dark-textarea" style="padding-left:42px;"
+                                      placeholder="Describe brevemente el motivo de tu consulta..."></textarea>
+                        </div>
+                        <span asp-validation-for="Motivo" class="field-error"></span>
                     </div>
 
-                    <div class="d-flex gap-2">
-                        <a asp-controller="Citas" asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+                    <div class="form-actions">
+                        <a asp-controller="Citas" asp-action="Index" class="btn-ghost">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
                         @if (medicos.Any())
                         {
-                            <button type="submit" class="btn btn-primary">Guardar cita</button>
+                            <button type="submit" class="btn-primary-dark">
+                                <i class="bi bi-calendar-check"></i> Guardar cita
+                            </button>
                         }
                         else
                         {
-                            <button type="button" class="btn btn-primary" disabled>Guardar cita</button>
+                            <button type="button" class="btn-primary-dark" disabled>
+                                <i class="bi bi-calendar-check"></i> Guardar cita
+                            </button>
                         }
                     </div>
                 </form>

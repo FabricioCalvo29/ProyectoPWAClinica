@@ -2,73 +2,325 @@
 
 @{
     Layout = "_Layout";
+    var total      = Model.Count();
+    var pendientes = Model.Count(c => c.EstadoCita == "Pendiente");
+    var completadas = Model.Count(c => c.EstadoCita == "Completada");
+    var canceladas  = Model.Count(c => c.EstadoCita != "Pendiente" && c.EstadoCita != "Completada");
 }
 
-<div class="container" style="margin-top: 120px; min-height: 80vh;">
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-        <div>
-            <h2 class="fw-bold mb-0 text-dark">Control Global de Citas</h2>
-            <p class="text-secondary mb-0">Vista administrativa de la agenda general de la clínica.</p>
-        </div>
-        <a asp-controller="Home" asp-action="DashboardAdmin" class="btn btn-outline-secondary rounded-pill px-4">
-            <i class="bi bi-arrow-left me-1"></i> Volver al Panel
-        </a>
-    </div>
+<style>
+body { background-color: #040d1a !important; }
 
-    @if (!Model.Any())
-    {
-        <div class="alert alert-info text-center p-5 rounded-4 shadow-sm">
-            <i class="bi bi-calendar-x d-block fs-1 mb-3"></i>
-            No hay citas registradas en el sistema en la historia.
+/* ── grid bg ── */
+.page-wrap {
+    min-height: 100vh;
+    background: #040d1a;
+    padding: 100px 0 60px;
+    position: relative;
+}
+.page-wrap::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(13,148,136,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(13,148,136,.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+}
+
+/* ── page header ── */
+.page-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 32px; gap: 16px; flex-wrap: wrap;
+    position: relative; z-index: 1;
+}
+.page-header-text h1 {
+    font-size: 1.6rem; font-weight: 800; color: #fff; margin-bottom: 4px;
+}
+.page-header-text p { color: rgba(255,255,255,.4); font-size: .9rem; margin: 0; }
+
+/* ── stats row ── */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px; margin-bottom: 28px; position: relative; z-index: 1;
+}
+.stat-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 16px; padding: 18px 20px;
+    display: flex; align-items: center; gap: 14px;
+}
+.stat-card .stat-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+}
+.stat-card.all    .stat-icon { background: rgba(13,148,136,.15); color: #0d9488; border: 1px solid rgba(13,148,136,.25); }
+.stat-card.pend   .stat-icon { background: rgba(245,158,11,.15); color: #f59e0b; border: 1px solid rgba(245,158,11,.25); }
+.stat-card.comp   .stat-icon { background: rgba(16,185,129,.15); color: #10b981; border: 1px solid rgba(16,185,129,.25); }
+.stat-card.canc   .stat-icon { background: rgba(239,68,68,.15);  color: #ef4444; border: 1px solid rgba(239,68,68,.25); }
+.stat-num  { font-size: 1.5rem; font-weight: 800; color: #fff; line-height: 1; }
+.stat-lbl  { font-size: .72rem; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+
+/* ── main card ── */
+.main-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 24px; overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,.35);
+    position: relative; z-index: 1;
+}
+.main-card-header {
+    background: linear-gradient(135deg, rgba(13,148,136,.2) 0%, rgba(8,30,60,.5) 100%);
+    border-bottom: 1px solid rgba(13,148,136,.2);
+    padding: 20px 28px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.main-card-header-title {
+    display: flex; align-items: center; gap: 12px;
+}
+.main-card-header-title .card-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: rgba(13,148,136,.2); border: 1.5px solid rgba(13,148,136,.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; color: #0d9488;
+}
+.main-card-header-title span {
+    font-size: 1rem; font-weight: 700; color: #fff;
+}
+
+/* ── table ── */
+.dark-table { width: 100%; border-collapse: collapse; }
+.dark-table thead tr {
+    background: rgba(255,255,255,.05);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.dark-table thead th {
+    padding: 13px 18px;
+    font-size: .7rem; font-weight: 700;
+    color: rgba(255,255,255,.4);
+    text-transform: uppercase; letter-spacing: .07em;
+    white-space: nowrap;
+}
+.dark-table tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,.05);
+    transition: background .15s;
+}
+.dark-table tbody tr:hover { background: rgba(13,148,136,.05); }
+.dark-table tbody tr:last-child { border-bottom: none; }
+.dark-table td {
+    padding: 14px 18px;
+    color: rgba(255,255,255,.75);
+    font-size: .88rem; vertical-align: middle;
+}
+.dark-table td.id-col {
+    font-weight: 800; color: rgba(13,148,136,.9);
+    font-size: .82rem; white-space: nowrap;
+}
+.dark-table td .main-text  { color: #fff; font-weight: 600; }
+.dark-table td .sub-text   { color: rgba(255,255,255,.35); font-size: .78rem; margin-top: 1px; }
+
+/* ── badges ── */
+.status-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: .74rem; font-weight: 700; letter-spacing: .04em;
+    text-transform: uppercase; border-radius: 8px; padding: 4px 10px;
+}
+.status-badge.pend { background: rgba(245,158,11,.12); color: #f59e0b; border: 1px solid rgba(245,158,11,.25); }
+.status-badge.comp { background: rgba(16,185,129,.12); color: #10b981; border: 1px solid rgba(16,185,129,.25); }
+.status-badge.canc { background: rgba(239,68,68,.12);  color: #ef4444; border: 1px solid rgba(239,68,68,.25); }
+.status-badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+/* ── motivo truncate ── */
+.motivo-cell {
+    max-width: 180px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ── action btns ── */
+.action-wrap { display: flex; gap: 6px; justify-content: flex-end; }
+.act-btn {
+    width: 32px; height: 32px; border-radius: 9px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: .8rem; border: none; cursor: pointer;
+    transition: background .15s, transform .1s; text-decoration: none;
+}
+.act-btn:hover { transform: translateY(-1px); }
+.act-btn.check {
+    background: rgba(16,185,129,.12); color: #10b981;
+    border: 1px solid rgba(16,185,129,.25);
+}
+.act-btn.check:hover { background: rgba(16,185,129,.22); }
+.act-btn.cross {
+    background: rgba(239,68,68,.12); color: #ef4444;
+    border: 1px solid rgba(239,68,68,.25);
+}
+.act-btn.cross:hover { background: rgba(239,68,68,.22); }
+.act-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+.closed-lbl { color: rgba(255,255,255,.2); font-size: .78rem; }
+
+/* ── empty state ── */
+.empty-state {
+    padding: 70px 20px; text-align: center;
+}
+.empty-state .empty-icon {
+    width: 70px; height: 70px; border-radius: 22px;
+    background: rgba(13,148,136,.1); border: 1.5px solid rgba(13,148,136,.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; color: #0d9488; margin: 0 auto 20px;
+}
+.empty-state h3 { color: #fff; font-weight: 700; font-size: 1.1rem; margin-bottom: 6px; }
+.empty-state p  { color: rgba(255,255,255,.35); font-size: .87rem; margin: 0; }
+
+/* ── back btn ── */
+.btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent; color: rgba(255,255,255,.5);
+    border: 1.5px solid rgba(255,255,255,.15); border-radius: 12px;
+    padding: 10px 20px; font-size: .88rem; font-weight: 600;
+    cursor: pointer; transition: border-color .2s, color .2s; text-decoration: none;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,.35); color: #fff; }
+</style>
+
+<div class="page-wrap">
+    <div class="container" style="max-width:1100px;">
+
+        <!-- Header -->
+        <div class="page-header" data-aos="fade-down">
+            <div class="page-header-text">
+                <h1>Control Global de Citas</h1>
+                <p>Vista administrativa de la agenda general de la clínica</p>
+            </div>
+            <a asp-controller="Home" asp-action="DashboardAdmin" class="btn-ghost">
+                <i class="bi bi-arrow-left"></i> Volver al Panel
+            </a>
         </div>
-    }
-    else
-    {
-        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-dark">
-                        <tr>
-                            <th class="ps-4">ID</th>
-                            <th>Paciente</th>
-                            <th>Doctor Asignado</th>
-                            <th>Fecha</th>
-                            <th>Motivo</th>
-                            <th>Estado</th>
-                            <th class="text-end pe-4">Decisión</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach(var cita in Model.OrderByDescending(c => c.FechaHora))
-                        {
-                            <tr>
-                                <td class="ps-4 fw-bold">#@cita.IdCita</td>
-                                <td><i class="bi bi-person text-secondary me-1"></i> Paciente @cita.IdPaciente</td>
-                                <td>Dr. @cita.NombreMedico <br/><small class="text-muted">@cita.Especialidad</small></td>
-                                <td>@cita.FechaHora.ToString("dd MMM yyyy, HH:mm")</td>
-                                <td class="text-truncate" style="max-width: 150px;">@cita.Motivo</td>
-                                <td>
-                                    @if(cita.EstadoCita == "Pendiente") { <span class="badge bg-warning text-dark px-2 rounded-pill">@cita.EstadoCita</span> }
-                                    else if(cita.EstadoCita == "Completada") { <span class="badge bg-success px-2 rounded-pill">@cita.EstadoCita</span> }
-                                    else { <span class="badge bg-danger px-2 rounded-pill">@cita.EstadoCita</span> }
-                                </td>
-                                <td class="text-end pe-4">
-                                    @if(cita.EstadoCita == "Pendiente")
-                                    {
-                                        <!-- En futuro, los admins pueden marcar completado o cancelar por el paciente acá -->
-                                        <button class="btn btn-sm btn-outline-success rounded-pill" disabled><i class="bi bi-check-lg"></i></button>
-                                        <button class="btn btn-sm btn-outline-danger rounded-pill" disabled><i class="bi bi-x-lg"></i></button>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted small">Cerrada</span>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+
+        <!-- Stats -->
+        <div class="stats-row" data-aos="fade-up" data-aos-delay="50">
+            <div class="stat-card all">
+                <div class="stat-icon"><i class="bi bi-calendar3"></i></div>
+                <div>
+                    <div class="stat-num">@total</div>
+                    <div class="stat-lbl">Total citas</div>
+                </div>
+            </div>
+            <div class="stat-card pend">
+                <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+                <div>
+                    <div class="stat-num">@pendientes</div>
+                    <div class="stat-lbl">Pendientes</div>
+                </div>
+            </div>
+            <div class="stat-card comp">
+                <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
+                <div>
+                    <div class="stat-num">@completadas</div>
+                    <div class="stat-lbl">Completadas</div>
+                </div>
+            </div>
+            <div class="stat-card canc">
+                <div class="stat-icon"><i class="bi bi-x-circle"></i></div>
+                <div>
+                    <div class="stat-num">@canceladas</div>
+                    <div class="stat-lbl">Canceladas</div>
+                </div>
             </div>
         </div>
-    }
+
+        <!-- Table card -->
+        <div class="main-card" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="main-card-header">
+                <div class="main-card-header-title">
+                    <div class="card-icon"><i class="bi bi-table"></i></div>
+                    <span>Historial de citas</span>
+                </div>
+                <span style="color:rgba(255,255,255,.3); font-size:.8rem;">@total registro@(total != 1 ? "s" : "")</span>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="bi bi-calendar-x"></i></div>
+                    <h3>Sin citas registradas</h3>
+                    <p>No hay citas en el historial del sistema.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="dark-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Paciente</th>
+                                <th>Doctor asignado</th>
+                                <th>Fecha y hora</th>
+                                <th>Motivo</th>
+                                <th>Estado</th>
+                                <th style="text-align:right; padding-right:22px;">Decisión</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cita in Model.OrderByDescending(c => c.FechaHora))
+                            {
+                                <tr>
+                                    <td class="id-col">#@cita.IdCita</td>
+
+                                    <td>
+                                        <div class="main-text"><i class="bi bi-person" style="color:rgba(255,255,255,.3); margin-right:5px;"></i>Paciente @cita.IdPaciente</div>
+                                    </td>
+
+                                    <td>
+                                        <div class="main-text">Dr. @cita.NombreMedico</div>
+                                        <div class="sub-text">@cita.Especialidad</div>
+                                    </td>
+
+                                    <td>
+                                        <div class="main-text">@cita.FechaHora.ToString("dd MMM yyyy")</div>
+                                        <div class="sub-text">@cita.FechaHora.ToString("HH:mm")</div>
+                                    </td>
+
+                                    <td class="motivo-cell" title="@cita.Motivo">@cita.Motivo</td>
+
+                                    <td>
+                                        @if (cita.EstadoCita == "Pendiente")
+                                        {
+                                            <span class="status-badge pend">Pendiente</span>
+                                        }
+                                        else if (cita.EstadoCita == "Completada")
+                                        {
+                                            <span class="status-badge comp">Completada</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge canc">@cita.EstadoCita</span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <div class="action-wrap">
+                                            @if (cita.EstadoCita == "Pendiente")
+                                            {
+                                                <button class="act-btn check" disabled title="Marcar completada"><i class="bi bi-check-lg"></i></button>
+                                                <button class="act-btn cross" disabled title="Cancelar cita"><i class="bi bi-x-lg"></i></button>
+                                            }
+                                            else
+                                            {
+                                                <span class="closed-lbl">Cerrada</span>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+    </div>
 </div>

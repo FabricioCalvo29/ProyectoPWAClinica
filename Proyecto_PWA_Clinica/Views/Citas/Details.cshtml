@@ -2,43 +2,207 @@
 
 @{
     Layout = "_Layout";
+    var estadoClass = Model.EstadoCita?.ToLower() switch {
+        "completada" => "completada",
+        "cancelada"  => "cancelada",
+        _            => "pendiente"
+    };
 }
 
-<div class="container mt-5 pt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow p-4">
-                <div class="mb-4">
-                    <h1 class="h3">Detalle de cita</h1>
-                    <p class="mb-0">Informacion registrada de la cita seleccionada.</p>
+<style>
+body { background-color: #040d1a !important; }
+
+.page-wrap {
+    min-height: 100vh; background: #040d1a;
+    padding: 100px 0 60px; position: relative;
+}
+.page-wrap::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(13,148,136,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(13,148,136,.04) 1px, transparent 1px);
+    background-size: 60px 60px; pointer-events: none;
+}
+
+.detail-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 24px; overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,.35);
+    position: relative; z-index: 1;
+}
+.detail-header {
+    background: linear-gradient(135deg, rgba(13,148,136,.2) 0%, rgba(8,30,60,.5) 100%);
+    border-bottom: 1px solid rgba(13,148,136,.2);
+    padding: 32px 36px 26px;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.detail-header-left h1 { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+.detail-header-left p  { color: rgba(255,255,255,.45); font-size: .9rem; margin: 0; }
+.detail-header-icon {
+    width: 52px; height: 52px; border-radius: 16px;
+    background: rgba(13,148,136,.2); border: 1.5px solid rgba(13,148,136,.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; color: #0d9488; flex-shrink: 0;
+}
+
+.detail-body { padding: 32px 36px 36px; }
+
+.detail-section { margin-bottom: 32px; }
+.detail-section-title {
+    font-size: .7rem; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: #0d9488;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+.detail-section-title::after {
+    content: ''; flex: 1; height: 1px; background: rgba(255,255,255,.07);
+}
+
+.detail-row {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 14px 18px; border-radius: 12px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.05);
+    margin-bottom: 8px;
+}
+.detail-row-icon {
+    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+    background: rgba(13,148,136,.12);
+    display: flex; align-items: center; justify-content: center;
+    color: #0d9488; font-size: .9rem;
+}
+.detail-row-label {
+    font-size: .72rem; font-weight: 700; letter-spacing: .05em;
+    text-transform: uppercase; color: rgba(255,255,255,.35);
+    margin-bottom: 2px;
+}
+.detail-row-value { font-size: .92rem; color: #fff; font-weight: 500; }
+
+.estado-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 14px; border-radius: 50px;
+    font-size: .75rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+}
+.estado-badge.pendiente  { background: rgba(245,158,11,.15); color: #fbbf24; border: 1px solid rgba(245,158,11,.3); }
+.estado-badge.completada { background: rgba(34,197,94,.12);  color: #4ade80; border: 1px solid rgba(34,197,94,.3); }
+.estado-badge.cancelada  { background: rgba(239,68,68,.12);  color: #f87171; border: 1px solid rgba(239,68,68,.3); }
+
+.notas-box {
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 14px; padding: 18px 20px;
+    color: rgba(255,255,255,.6); font-size: .9rem; line-height: 1.7;
+}
+.notas-empty { color: rgba(255,255,255,.25); font-style: italic; }
+
+.btn-outline-teal {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 22px; border-radius: 12px;
+    border: 1.5px solid rgba(13,148,136,.5); color: #0d9488;
+    font-size: .88rem; font-weight: 700;
+    text-decoration: none; transition: background .2s, color .2s; background: transparent;
+}
+.btn-outline-teal:hover { background: #0d9488; color: #fff; border-color: #0d9488; }
+
+@@media (max-width: 576px) {
+    .detail-body { padding: 24px 20px; }
+    .detail-header { padding: 24px 20px 20px; }
+}
+</style>
+
+<div class="page-wrap">
+    <div class="container" style="max-width: 640px;">
+        <div class="detail-card" data-aos="fade-up">
+
+            <div class="detail-header">
+                <div class="detail-header-left">
+                    <h1>Detalle de cita</h1>
+                    <p>Información registrada de la cita seleccionada</p>
+                </div>
+                <div class="detail-header-icon"><i class="bi bi-calendar-check"></i></div>
+            </div>
+
+            <div class="detail-body">
+
+                <!-- INFORMACIÓN DE LA CITA -->
+                <div class="detail-section">
+                    <div class="detail-section-title">Información de la cita</div>
+
+                    <div class="detail-row">
+                        <div class="detail-row-icon"><i class="bi bi-hash"></i></div>
+                        <div>
+                            <div class="detail-row-label">ID de cita</div>
+                            <div class="detail-row-value">#@Model.IdCita</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-row-icon"><i class="bi bi-clock"></i></div>
+                        <div>
+                            <div class="detail-row-label">Fecha y hora</div>
+                            <div class="detail-row-value">@Model.FechaHora.ToString("dd/MM/yyyy HH:mm")</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-row-icon"><i class="bi bi-activity"></i></div>
+                        <div>
+                            <div class="detail-row-label">Estado</div>
+                            <div class="detail-row-value">
+                                <span class="estado-badge @estadoClass">@Model.EstadoCita</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-row-icon"><i class="bi bi-card-text"></i></div>
+                        <div>
+                            <div class="detail-row-label">Motivo</div>
+                            <div class="detail-row-value">@Model.Motivo</div>
+                        </div>
+                    </div>
                 </div>
 
-                <dl class="row mb-0">
-                    <dt class="col-sm-4">Id de cita</dt>
-                    <dd class="col-sm-8">@Model.IdCita</dd>
+                <!-- MÉDICO -->
+                <div class="detail-section">
+                    <div class="detail-section-title">Médico asignado</div>
 
-                    <dt class="col-sm-4">Fecha y hora</dt>
-                    <dd class="col-sm-8">@Model.FechaHora.ToString("dd/MM/yyyy HH:mm")</dd>
+                    <div class="detail-row">
+                        <div class="detail-row-icon"><i class="bi bi-person-badge"></i></div>
+                        <div>
+                            <div class="detail-row-label">Nombre</div>
+                            <div class="detail-row-value">@Model.NombreMedico</div>
+                        </div>
+                    </div>
 
-                    <dt class="col-sm-4">Medico</dt>
-                    <dd class="col-sm-8">@Model.NombreMedico</dd>
-
-                    <dt class="col-sm-4">Especialidad</dt>
-                    <dd class="col-sm-8">@Model.Especialidad</dd>
-
-                    <dt class="col-sm-4">Estado</dt>
-                    <dd class="col-sm-8">@Model.EstadoCita</dd>
-
-                    <dt class="col-sm-4">Motivo</dt>
-                    <dd class="col-sm-8">@Model.Motivo</dd>
-
-                    <dt class="col-sm-4">Notas del medico</dt>
-                    <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.NotasMedico) ? "Sin notas registradas." : Model.NotasMedico)</dd>
-                </dl>
-
-                <div class="mt-4">
-                    <a asp-controller="Citas" asp-action="Index" class="btn btn-outline-primary">Volver a citas</a>
+                    <div class="detail-row">
+                        <div class="detail-row-icon"><i class="bi bi-heart-pulse"></i></div>
+                        <div>
+                            <div class="detail-row-label">Especialidad</div>
+                            <div class="detail-row-value">@Model.Especialidad</div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- NOTAS -->
+                <div class="detail-section" style="margin-bottom: 28px;">
+                    <div class="detail-section-title">Notas del médico</div>
+                    <div class="notas-box">
+                        @if (string.IsNullOrWhiteSpace(Model.NotasMedico))
+                        {
+                            <span class="notas-empty">Sin notas registradas.</span>
+                        }
+                        else
+                        {
+                            @Model.NotasMedico
+                        }
+                    </div>
+                </div>
+
+                <a asp-controller="Citas" asp-action="Index" class="btn-outline-teal">
+                    <i class="bi bi-arrow-left"></i> Volver a mis citas
+                </a>
+
             </div>
         </div>
     </div>

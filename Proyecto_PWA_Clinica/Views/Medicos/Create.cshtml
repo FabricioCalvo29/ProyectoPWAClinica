@@ -4,72 +4,260 @@
     Layout = "_Layout";
 }
 
-<section class="section" style="padding-top: 120px;">
-    <div class="container">
-        <div class="mb-4">
-            <h2 class="fw-bold">Registrar Médico</h2>
-            <p class="text-muted mb-0">Crea un nuevo usuario médico con acceso institucional al sistema.</p>
-        </div>
+<style>
+body { background-color: #040d1a !important; }
 
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
+.page-wrap {
+    min-height: 100vh;
+    background: #040d1a;
+    padding: 100px 0 60px;
+    position: relative;
+}
+.page-wrap::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(13,148,136,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(13,148,136,.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+}
+
+/* ── form card ── */
+.form-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 24px; overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,.35);
+    position: relative; z-index: 1;
+}
+.form-card-header {
+    background: linear-gradient(135deg, rgba(13,148,136,.2) 0%, rgba(8,30,60,.5) 100%);
+    border-bottom: 1px solid rgba(13,148,136,.2);
+    padding: 32px 36px 26px;
+}
+.form-card-header .header-icon {
+    width: 52px; height: 52px; border-radius: 16px;
+    background: rgba(13,148,136,.2); border: 1.5px solid rgba(13,148,136,.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; color: #0d9488; margin-bottom: 16px;
+}
+.form-card-header h1 { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+.form-card-header p  { color: rgba(255,255,255,.45); font-size: .9rem; margin: 0; }
+.form-card-body { padding: 32px 36px 36px; }
+
+/* ── section divider ── */
+.form-section-label {
+    font-size: .7rem; font-weight: 700; color: rgba(13,148,136,.7);
+    text-transform: uppercase; letter-spacing: .1em;
+    margin-bottom: 18px; margin-top: 8px;
+    display: flex; align-items: center; gap: 10px;
+}
+.form-section-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: rgba(13,148,136,.15);
+}
+
+/* ── fields ── */
+.form-label-dark {
+    display: block; font-size: .8rem; font-weight: 700;
+    color: rgba(255,255,255,.55); letter-spacing: .05em;
+    text-transform: uppercase; margin-bottom: 8px;
+}
+.form-input-wrap { position: relative; }
+.form-input-wrap .bi {
+    position: absolute; left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,.25); font-size: .95rem; pointer-events: none;
+}
+
+.dark-input,
+.dark-select {
+    width: 100%;
+    background: rgba(255,255,255,.06);
+    border: 1.5px solid rgba(255,255,255,.1);
+    border-radius: 12px;
+    padding: 12px 14px 12px 42px;
+    color: #fff; font-size: .9rem;
+    transition: border-color .2s, background .2s; outline: none;
+}
+.dark-select { appearance: none; padding-right: 36px; }
+.dark-select option { background: #071428; color: #fff; }
+.select-wrap { position: relative; }
+.select-chevron {
+    position: absolute; right: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,.25); font-size: .8rem; pointer-events: none;
+}
+.dark-input::placeholder { color: rgba(255,255,255,.2); }
+.dark-input:focus,
+.dark-select:focus {
+    border-color: rgba(13,148,136,.6);
+    background: rgba(13,148,136,.07);
+}
+
+.field-wrap { margin-bottom: 20px; }
+.field-error { color: #f87171; font-size: .78rem; margin-top: 5px; display: block; }
+
+/* ── info note ── */
+.dark-note {
+    background: rgba(13,148,136,.08);
+    border: 1px solid rgba(13,148,136,.2);
+    border-radius: 12px; padding: 13px 18px;
+    font-size: .85rem; color: rgba(13,148,136,.9);
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 8px;
+}
+
+/* ── alert ── */
+.dark-alert-danger {
+    border-radius: 12px; padding: 14px 18px;
+    font-size: .9rem; margin-bottom: 24px;
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); color: #fca5a5;
+}
+
+/* ── actions ── */
+.form-actions { display: flex; gap: 12px; align-items: center; margin-top: 28px; }
+.btn-primary-dark {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #0d9488; color: #fff;
+    border: none; border-radius: 12px;
+    padding: 12px 28px; font-size: .9rem; font-weight: 700;
+    cursor: pointer; transition: background .2s, transform .15s; text-decoration: none;
+}
+.btn-primary-dark:hover { background: #0f766e; color: #fff; transform: translateY(-1px); }
+.btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent; color: rgba(255,255,255,.5);
+    border: 1.5px solid rgba(255,255,255,.15); border-radius: 12px;
+    padding: 12px 22px; font-size: .9rem; font-weight: 600;
+    cursor: pointer; transition: border-color .2s, color .2s; text-decoration: none;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,.35); color: #fff; }
+</style>
+
+<div class="page-wrap">
+    <div class="container" style="max-width: 700px;">
+        <div class="form-card" data-aos="fade-up">
+
+            <div class="form-card-header">
+                <div class="header-icon"><i class="bi bi-person-plus"></i></div>
+                <h1>Registrar Médico</h1>
+                <p>Crea un nuevo usuario médico con acceso institucional al sistema</p>
+            </div>
+
+            <div class="form-card-body">
                 <form asp-action="Create" method="post">
                     @Html.AntiForgeryToken()
 
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <div asp-validation-summary="ModelOnly" class="dark-alert-danger">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+
+                    <!-- Datos personales -->
+                    <div class="form-section-label"><i class="bi bi-person"></i> Datos personales</div>
+
+                    <div class="row g-3 mb-2">
+                        <div class="col-md-6">
+                            <div class="field-wrap">
+                                <label asp-for="Nombre" class="form-label-dark"></label>
+                                <div class="form-input-wrap">
+                                    <i class="bi bi-person"></i>
+                                    <input asp-for="Nombre" class="dark-input" placeholder="Nombre del médico" />
+                                </div>
+                                <span asp-validation-for="Nombre" class="field-error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="field-wrap">
+                                <label asp-for="Apellido" class="form-label-dark"></label>
+                                <div class="form-input-wrap">
+                                    <i class="bi bi-person"></i>
+                                    <input asp-for="Apellido" class="dark-input" placeholder="Apellido del médico" />
+                                </div>
+                                <span asp-validation-for="Apellido" class="field-error"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Datos profesionales -->
+                    <div class="form-section-label"><i class="bi bi-briefcase-medical"></i> Datos profesionales</div>
+
+                    <div class="row g-3 mb-2">
+                        <div class="col-md-6">
+                            <div class="field-wrap">
+                                <label asp-for="Correo" class="form-label-dark">Correo institucional</label>
+                                <div class="form-input-wrap">
+                                    <i class="bi bi-envelope"></i>
+                                    <input asp-for="Correo" class="dark-input" placeholder="correo@clinica.com" />
+                                </div>
+                                <span asp-validation-for="Correo" class="field-error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="field-wrap">
+                                <label asp-for="IdEspecialidad" class="form-label-dark"></label>
+                                <div class="form-input-wrap select-wrap">
+                                    <i class="bi bi-heart-pulse"></i>
+                                    <select asp-for="IdEspecialidad"
+                                            asp-items="@(ViewBag.Especialidades as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)"
+                                            class="dark-select">
+                                        <option value="">Seleccione una especialidad</option>
+                                    </select>
+                                    <i class="bi bi-chevron-down select-chevron"></i>
+                                </div>
+                                <span asp-validation-for="IdEspecialidad" class="field-error"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seguridad -->
+                    <div class="form-section-label"><i class="bi bi-shield-lock"></i> Credenciales de acceso</div>
 
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label asp-for="Nombre" class="form-label"></label>
-                            <input asp-for="Nombre" class="form-control" />
-                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                            <div class="field-wrap">
+                                <label asp-for="Contrasenna" class="form-label-dark"></label>
+                                <div class="form-input-wrap">
+                                    <i class="bi bi-lock"></i>
+                                    <input asp-for="Contrasenna" type="password" class="dark-input" placeholder="••••••••" />
+                                </div>
+                                <span asp-validation-for="Contrasenna" class="field-error"></span>
+                            </div>
                         </div>
-
                         <div class="col-md-6">
-                            <label asp-for="Apellido" class="form-label"></label>
-                            <input asp-for="Apellido" class="form-control" />
-                            <span asp-validation-for="Apellido" class="text-danger"></span>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label asp-for="Correo" class="form-label">Correo institucional</label>
-                            <input asp-for="Correo" class="form-control" />
-                            <span asp-validation-for="Correo" class="text-danger"></span>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label asp-for="IdEspecialidad" class="form-label"></label>
-                            <select asp-for="IdEspecialidad" asp-items="ViewBag.Especialidades" class="form-select">
-                                <option value="">Seleccione una especialidad</option>
-                            </select>
-                            <span asp-validation-for="IdEspecialidad" class="text-danger"></span>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label asp-for="Contrasenna" class="form-label"></label>
-                            <input asp-for="Contrasenna" type="password" class="form-control" />
-                            <span asp-validation-for="Contrasenna" class="text-danger"></span>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label asp-for="ConfirmarContrasenna" class="form-label"></label>
-                            <input asp-for="ConfirmarContrasenna" type="password" class="form-control" />
-                            <span asp-validation-for="ConfirmarContrasenna" class="text-danger"></span>
+                            <div class="field-wrap">
+                                <label asp-for="ConfirmarContrasenna" class="form-label-dark"></label>
+                                <div class="form-input-wrap">
+                                    <i class="bi bi-lock-fill"></i>
+                                    <input asp-for="ConfirmarContrasenna" type="password" class="dark-input" placeholder="••••••••" />
+                                </div>
+                                <span asp-validation-for="ConfirmarContrasenna" class="field-error"></span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="alert alert-info mt-4 mb-0">
+                    <div class="dark-note">
+                        <i class="bi bi-info-circle-fill" style="flex-shrink:0;"></i>
                         El código profesional se generará automáticamente al guardar el médico.
                     </div>
 
-                    <div class="mt-4 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary rounded-pill px-4">Guardar</button>
-                        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">Cancelar</a>
+                    <div class="form-actions">
+                        <a asp-action="Index" class="btn-ghost">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn-primary-dark">
+                            <i class="bi bi-person-check"></i> Guardar médico
+                        </button>
                     </div>
+
                 </form>
             </div>
         </div>
     </div>
-</section>
+</div>
 
-<partial name="_ValidationScriptsPartial" />
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

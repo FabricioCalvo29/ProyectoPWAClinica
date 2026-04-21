@@ -4,54 +4,189 @@
     Layout = "_Layout";
 }
 
-<div class="container mt-5 pt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
+<style>
+body { background-color: #040d1a !important; }
 
-            <div class="card shadow p-4">
-                <div class="text-center mb-4">
-                    <h1>Iniciar Sesión</h1>
-                    <p>Bienvenido de nuevo. Por favor ingresa tus credenciales para acceder al portal de pacientes.</p>
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 16px 40px;
+    background: #040d1a;
+    position: relative;
+    overflow: hidden;
+}
+.auth-page::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(13,148,136,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(13,148,136,.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+}
+.auth-glow {
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(13,148,136,.12) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    pointer-events: none;
+}
+.auth-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 24px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 460px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 32px 80px rgba(0,0,0,.4);
+}
+.auth-header {
+    background: linear-gradient(135deg, rgba(13,148,136,.25) 0%, rgba(8,30,60,.6) 100%);
+    border-bottom: 1px solid rgba(13,148,136,.2);
+    padding: 36px 40px 28px;
+    text-align: center;
+}
+.auth-icon {
+    width: 60px; height: 60px;
+    background: rgba(13,148,136,.2);
+    border: 1.5px solid rgba(13,148,136,.4);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 1.5rem; color: #0d9488;
+}
+.auth-header h1 { font-size: 1.6rem; font-weight: 800; color: #fff; margin-bottom: 6px; }
+.auth-header p  { color: rgba(255,255,255,.5); font-size: .9rem; margin: 0; }
+
+.auth-body { padding: 36px 40px 40px; }
+
+.auth-label {
+    display: block;
+    font-size: .82rem; font-weight: 700;
+    color: rgba(255,255,255,.6);
+    letter-spacing: .04em; text-transform: uppercase;
+    margin-bottom: 8px;
+}
+.auth-input-wrap { position: relative; margin-bottom: 20px; }
+.auth-input-wrap .bi {
+    position: absolute; left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,.25); font-size: .95rem;
+    pointer-events: none;
+}
+.auth-input {
+    width: 100%;
+    background: rgba(255,255,255,.06);
+    border: 1.5px solid rgba(255,255,255,.1);
+    border-radius: 12px;
+    padding: 12px 14px 12px 40px;
+    color: #fff;
+    font-size: .92rem;
+    transition: border-color .2s, background .2s;
+    outline: none;
+}
+.auth-input::placeholder { color: rgba(255,255,255,.2); }
+.auth-input:focus {
+    border-color: rgba(13,148,136,.6);
+    background: rgba(13,148,136,.07);
+}
+.auth-input.is-invalid { border-color: rgba(239,68,68,.6); }
+
+.auth-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%;
+    background: #0d9488; color: #fff;
+    border: none; border-radius: 12px;
+    padding: 13px; font-size: .95rem; font-weight: 700;
+    cursor: pointer; transition: background .2s, transform .15s;
+    margin-top: 8px;
+}
+.auth-btn:hover { background: #0f766e; transform: translateY(-1px); }
+
+.auth-links { text-align: center; margin-top: 24px; }
+.auth-links p { color: rgba(255,255,255,.4); font-size: .87rem; margin-bottom: 8px; }
+.auth-links a { color: #0d9488; font-weight: 600; text-decoration: none; }
+.auth-links a:hover { color: #14b8a6; }
+
+.auth-alert-error {
+    background: rgba(239,68,68,.1);
+    border: 1px solid rgba(239,68,68,.3);
+    border-radius: 10px; padding: 12px 16px;
+    color: #fca5a5; font-size: .88rem; margin-bottom: 20px;
+}
+.auth-alert-success {
+    background: rgba(34,197,94,.1);
+    border: 1px solid rgba(34,197,94,.3);
+    border-radius: 10px; padding: 12px 16px;
+    color: #86efac; font-size: .88rem; margin-bottom: 20px;
+}
+.field-error { color: #f87171; font-size: .78rem; margin-top: 4px; display: block; }
+
+@@media (max-width: 576px) {
+    .auth-body { padding: 24px 20px 28px; }
+    .auth-header { padding: 28px 20px 22px; }
+}
+</style>
+
+<div class="auth-page">
+    <div class="auth-glow"></div>
+    <div class="auth-card" data-aos="fade-up">
+        <div class="auth-header">
+            <div class="auth-icon"><i class="bi bi-shield-lock"></i></div>
+            <h1>Iniciar sesión</h1>
+            <p>Bienvenido de nuevo. Ingresa tus credenciales para continuar.</p>
+        </div>
+        <div class="auth-body">
+
+            @if (TempData["MensajeExito"] != null)
+            {
+                <div class="auth-alert-success">
+                    <i class="bi bi-check-circle-fill me-2"></i>@TempData["MensajeExito"]
+                </div>
+            }
+
+            <div asp-validation-summary="ModelOnly" class="auth-alert-error"></div>
+
+            <form asp-action="IniciarSesion" asp-controller="Home" method="post">
+
+                <div>
+                    <label asp-for="Correo" class="auth-label">Correo electrónico</label>
+                    <div class="auth-input-wrap">
+                        <i class="bi bi-envelope"></i>
+                        <input asp-for="Correo" class="auth-input" placeholder="correo@ejemplo.com" />
+                    </div>
+                    <span asp-validation-for="Correo" class="field-error"></span>
                 </div>
 
-                <form asp-action="IniciarSesion" asp-controller="Home" method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                    @if (TempData["MensajeExito"] != null)
-                    {
-                        <div class="alert alert-success">
-                            @TempData["MensajeExito"]
-                        </div>
-                    }
-
-                    <div class="mb-3">
-                        <label asp-for="Correo" class="form-label">Correo electrónico</label>
-                        <input asp-for="Correo" class="form-control" />
-                        <span asp-validation-for="Correo" class="text-danger"></span>
+                <div>
+                    <label asp-for="Contrasena" class="auth-label">Contraseña</label>
+                    <div class="auth-input-wrap">
+                        <i class="bi bi-lock"></i>
+                        <input asp-for="Contrasena" type="password" class="auth-input" placeholder="••••••••" />
                     </div>
+                    <span asp-validation-for="Contrasena" class="field-error"></span>
+                </div>
 
-                    <div class="mb-3">
-                        <label asp-for="Contrasena" class="form-label">Contraseña</label>
-                        <input asp-for="Contrasena" class="form-control" />
-                        <span asp-validation-for="Contrasena" class="text-danger"></span>
-                    </div>
+                <div style="text-align:right; margin-bottom:20px; margin-top:-8px;">
+                    <a asp-action="RecuperarAcceso" asp-controller="Home"
+                       style="font-size:.82rem; color:rgba(255,255,255,.35); text-decoration:none;">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+                </div>
 
-                    <div class="d-grid mb-3">
-                        <button type="submit" class="btn btn-primary">Entrar</button>
-                    </div>
+                <button type="submit" class="auth-btn">
+                    <i class="bi bi-box-arrow-in-right"></i> Entrar
+                </button>
+            </form>
 
-                    <div class="text-center">
-                        <p class="mb-0">
-                            ¿No tienes cuenta?
-                            <a asp-controller="Home" asp-action="Registro">Regístrate aquí</a>
-                            <a asp-action="RecuperarAcceso" asp-controller="Home" class="text-decoration-none small">
-                                ¿Olvidaste tu contraseña?
-                            </a>
-                        </p>
-                    </div>
-                </form>
+            <div class="auth-links">
+                <p>¿No tienes cuenta? <a asp-controller="Home" asp-action="Registro">Regístrate aquí</a></p>
             </div>
-
         </div>
     </div>
 </div>

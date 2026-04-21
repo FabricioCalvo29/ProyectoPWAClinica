@@ -5,80 +5,220 @@
     var tratamientos = ViewBag.Tratamientos as List<Proyecto_PWA_Clinica.Models.Tratamiento> ?? new List<Proyecto_PWA_Clinica.Models.Tratamiento>();
 }
 
-<!-- Hero Section -->
-<section class="hero section bg-light text-dark text-center" style="padding-top: 100px; padding-bottom: 50px; background: linear-gradient(180deg, rgba(235,244,255,1) 0%, rgba(255,255,255,1) 100%);">
-    <div class="container">
-        <i class="bi bi-journal-medical fs-1 text-primary mb-3"></i>
-        <h2 class="fw-bold fs-1">Mi Historial Médico</h2>
-        <p class="text-secondary">Consulta el detalle de tus citas pasadas y los tratamientos recibidos.</p>
-    </div>
-</section>
+<style>
+body { background-color: #040d1a !important; }
 
-<!-- Timeline Section -->
-<section class="section py-4">
+.page-wrap {
+    min-height: 100vh; background: #040d1a;
+    padding: 100px 0 60px;
+}
+
+/* ── HEADER ── */
+.page-header {
+    background: linear-gradient(135deg, rgba(13,148,136,.15) 0%, rgba(8,30,60,.5) 100%);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    padding: 40px 0 36px; margin-bottom: 48px;
+    position: relative; overflow: hidden; text-align: center;
+}
+.page-header::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(13,148,136,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(13,148,136,.05) 1px, transparent 1px);
+    background-size: 48px 48px; pointer-events: none;
+}
+.page-header-inner { position: relative; z-index: 1; }
+.header-icon-big {
+    width: 64px; height: 64px; border-radius: 20px;
+    background: rgba(13,148,136,.2); border: 1.5px solid rgba(13,148,136,.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; color: #0d9488;
+    margin: 0 auto 20px;
+}
+.page-title { font-size: 1.9rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
+.page-sub   { color: rgba(255,255,255,.4); font-size: .95rem; margin: 0; }
+
+/* ── TIMELINE CARD ── */
+.hx-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 20px; overflow: hidden; margin-bottom: 20px;
+    transition: transform .25s, box-shadow .25s;
+}
+.hx-card:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,0,0,.3); }
+
+.hx-card-header {
+    background: linear-gradient(135deg, rgba(13,148,136,.18) 0%, rgba(8,30,60,.4) 100%);
+    border-bottom: 1px solid rgba(13,148,136,.15);
+    padding: 18px 24px;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.hx-date { font-size: 1rem; font-weight: 800; color: #fff; }
+.hx-date i { color: #0d9488; }
+.hx-time { font-size: .78rem; color: rgba(255,255,255,.35); margin-top: 2px; }
+.hx-badge-done {
+    background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.3);
+    color: #4ade80; border-radius: 50px;
+    font-size: .7rem; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; padding: 5px 14px;
+}
+
+.hx-card-body { padding: 24px; }
+
+.hx-section-title {
+    font-size: .7rem; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: rgba(255,255,255,.35);
+    margin-bottom: 14px;
+}
+.hx-detail {
+    display: flex; align-items: center; gap: 10px;
+    font-size: .88rem; color: rgba(255,255,255,.6);
+    margin-bottom: 8px;
+}
+.hx-detail i { color: #0d9488; width: 16px; }
+.hx-detail strong { color: #fff; }
+
+.divider-v {
+    width: 1px; background: rgba(255,255,255,.06);
+    align-self: stretch; margin: 0 8px;
+}
+
+/* ── TRATAMIENTO PILL ── */
+.trat-box {
+    background: rgba(13,148,136,.08);
+    border: 1px solid rgba(13,148,136,.2);
+    border-radius: 14px; padding: 16px 18px; margin-bottom: 10px;
+}
+.trat-box:last-child { margin-bottom: 0; }
+.trat-med { font-size: .95rem; font-weight: 800; color: #0d9488; margin-bottom: 8px; }
+.trat-med i { margin-right: 6px; }
+.trat-row { font-size: .82rem; color: rgba(255,255,255,.5); margin-bottom: 4px; }
+.trat-row strong { color: rgba(255,255,255,.75); }
+.trat-instrucciones {
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,.06);
+    font-size: .8rem; color: rgba(255,255,255,.4); line-height: 1.6;
+}
+
+.no-trat {
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 12px; padding: 16px 18px;
+    font-size: .87rem; color: rgba(255,255,255,.3);
+    display: flex; align-items: center; gap: 10px;
+}
+
+/* ── EMPTY ── */
+.empty-state {
+    text-align: center; padding: 72px 24px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 20px;
+}
+.empty-state i { font-size: 3rem; color: rgba(255,255,255,.1); display: block; margin-bottom: 16px; }
+.empty-state h4 { color: rgba(255,255,255,.35); font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+.empty-state p  { color: rgba(255,255,255,.2); font-size: .9rem; margin-bottom: 28px; }
+
+.btn-primary-dark {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #0d9488; color: #fff; border: none; border-radius: 12px;
+    padding: 12px 24px; font-size: .9rem; font-weight: 700;
+    text-decoration: none; transition: background .2s, transform .15s;
+}
+.btn-primary-dark:hover { background: #0f766e; color: #fff; transform: translateY(-1px); }
+</style>
+
+<div class="page-wrap">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <div class="container page-header-inner">
+            <div class="header-icon-big"><i class="bi bi-journal-medical"></i></div>
+            <div class="page-title">Mi Historial Médico</div>
+            <p class="page-sub">Consulta el detalle de tus citas pasadas y los tratamientos recibidos</p>
+        </div>
+    </div>
+
     <div class="container">
-        
-        @if (!Model.Any())
-        {
-            <div class="text-center py-5">
-                <i class="bi bi-box-seam text-muted fs-1 mb-3 d-block"></i>
-                <h4 class="text-muted">Aún no tienes historial médico</h4>
-                <p class="text-secondary">Tus citas completadas y tratamientos aparecerán aquí.</p>
-                <a asp-controller="Citas" asp-action="Create" class="btn btn-primary mt-3 px-4 rounded-pill">Agendar una cita</a>
-            </div>
-        }
-        else
-        {
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+
+                @if (!Model.Any())
+                {
+                    <div class="empty-state" data-aos="fade-up">
+                        <i class="bi bi-box-seam"></i>
+                        <h4>Aún no tienes historial médico</h4>
+                        <p>Tus citas completadas y tratamientos aparecerán aquí.</p>
+                        <a asp-controller="Citas" asp-action="Create" class="btn-primary-dark">
+                            <i class="bi bi-calendar-plus"></i> Agendar una cita
+                        </a>
+                    </div>
+                }
+                else
+                {
                     @foreach (var cita in Model.OrderByDescending(c => c.FechaHora))
                     {
                         var tratamientosCita = tratamientos.Where(t => t.IdCita == cita.IdCita).ToList();
 
-                        <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px; overflow: hidden;">
-                            <div class="card-header bg-primary text-white p-3 d-flex justify-content-between align-items-center">
+                        <div class="hx-card" data-aos="fade-up">
+                            <div class="hx-card-header">
                                 <div>
-                                    <h5 class="mb-0 fw-bold"><i class="bi bi-calendar-check me-2"></i> @cita.FechaHora.ToString("dd MMMM yyyy")</h5>
-                                    <small class="opacity-75">@cita.FechaHora.ToString("HH:mm") hrs</small>
-                                </div>
-                                <span class="badge bg-light text-primary rounded-pill px-3 py-2">Completada</span>
-                            </div>
-                            
-                            <div class="card-body p-4 bg-white">
-                                <div class="row">
-                                    <div class="col-md-5 border-end">
-                                        <h6 class="text-uppercase text-muted fw-bold mb-3 small">Detalles de la Cita</h6>
-                                        <p class="mb-2"><i class="bi bi-person-badge text-primary me-2"></i> <strong>Dr. @cita.NombreMedico</strong></p>
-                                        <p class="mb-2"><i class="bi bi-heart-pulse text-danger me-2"></i> @cita.Especialidad</p>
-                                        <p class="mb-0"><i class="bi bi-card-text text-secondary me-2"></i> Motivo: @cita.Motivo</p>
+                                    <div class="hx-date">
+                                        <i class="bi bi-calendar-check me-2"></i>
+                                        @cita.FechaHora.ToString("dd MMMM yyyy")
                                     </div>
-                                    <div class="col-md-7 ps-md-4">
-                                        <h6 class="text-uppercase text-muted fw-bold mb-3 small mt-4 mt-md-0">Tratamiento Recetado</h6>
-                                        
+                                    <div class="hx-time">@cita.FechaHora.ToString("HH:mm") hrs</div>
+                                </div>
+                                <span class="hx-badge-done"><i class="bi bi-check-circle me-1"></i>Completada</span>
+                            </div>
+
+                            <div class="hx-card-body">
+                                <div class="row g-4">
+                                    <!-- DETALLES -->
+                                    <div class="col-md-5">
+                                        <div class="hx-section-title">Detalles de la cita</div>
+                                        <div class="hx-detail">
+                                            <i class="bi bi-person-badge"></i>
+                                            <span><strong>Dr. @cita.NombreMedico</strong></span>
+                                        </div>
+                                        <div class="hx-detail">
+                                            <i class="bi bi-heart-pulse"></i>
+                                            <span>@cita.Especialidad</span>
+                                        </div>
+                                        <div class="hx-detail">
+                                            <i class="bi bi-card-text"></i>
+                                            <span>@cita.Motivo</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="divider-v d-none d-md-block"></div>
+
+                                    <!-- TRATAMIENTOS -->
+                                    <div class="col-md-6">
+                                        <div class="hx-section-title">Tratamiento recetado</div>
+
                                         @if (tratamientosCita.Any())
                                         {
-                                            @foreach(var trat in tratamientosCita)
+                                            @foreach (var trat in tratamientosCita)
                                             {
-                                                <div class="bg-light p-3 rounded mb-2 border border-light-subtle">
-                                                    <h6 class="text-primary fw-bold mb-1"><i class="bi bi-capsule me-1"></i> @trat.Medicamento</h6>
-                                                    <p class="mb-1 text-dark small"><strong>Dosis:</strong> @trat.Dosis</p>
-                                                    <p class="mb-1 text-dark small"><strong>Duración:</strong> @trat.Duracion</p>
-                                                    @if(!string.IsNullOrEmpty(trat.Instrucciones))
+                                                <div class="trat-box">
+                                                    <div class="trat-med"><i class="bi bi-capsule"></i>@trat.Medicamento</div>
+                                                    <div class="trat-row"><strong>Dosis:</strong> @trat.Dosis</div>
+                                                    <div class="trat-row"><strong>Duración:</strong> @trat.Duracion</div>
+                                                    @if (!string.IsNullOrEmpty(trat.Instrucciones))
                                                     {
-                                                        <hr class="my-2" style="opacity: 0.1">
-                                                        <p class="mb-0 text-secondary small"><i class="bi bi-info-circle me-1"></i> @trat.Instrucciones</p>
+                                                        <div class="trat-instrucciones">
+                                                            <i class="bi bi-info-circle me-1"></i>@trat.Instrucciones
+                                                        </div>
                                                     }
                                                 </div>
                                             }
                                         }
                                         else
                                         {
-                                            <div class="alert alert-secondary d-flex align-items-center p-3 mb-0">
-                                                <i class="bi bi-info-circle fs-4 me-3"></i>
-                                                <div>
-                                                    No se registraron medicamentos o tratamientos adicionales en esta visita.
-                                                </div>
+                                            <div class="no-trat">
+                                                <i class="bi bi-info-circle" style="color:#0d9488; font-size:1.1rem;"></i>
+                                                No se registraron medicamentos o tratamientos en esta visita.
                                             </div>
                                         }
                                     </div>
@@ -86,9 +226,9 @@
                             </div>
                         </div>
                     }
+                }
 
-                </div>
             </div>
-        }
+        </div>
     </div>
-</section>
+</div>

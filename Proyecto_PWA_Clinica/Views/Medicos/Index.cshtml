@@ -2,60 +2,331 @@
 
 @{
     Layout = "_Layout";
+    var total    = Model?.Count ?? 0;
+    var activos  = Model?.Count(m => m.Estado) ?? 0;
+    var inactivos = Model?.Count(m => !m.Estado) ?? 0;
 }
 
-<section class="section" style="padding-top: 120px;">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+<style>
+body { background-color: #040d1a !important; }
+
+.page-wrap {
+    min-height: 100vh;
+    background: #040d1a;
+    padding: 100px 0 60px;
+    position: relative;
+}
+.page-wrap::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(13,148,136,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(13,148,136,.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+}
+
+/* ── page header ── */
+.page-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 28px; gap: 16px; flex-wrap: wrap;
+    position: relative; z-index: 1;
+}
+.page-header h1 { font-size: 1.6rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+.page-header p  { color: rgba(255,255,255,.4); font-size: .9rem; margin: 0; }
+
+/* ── mini stats ── */
+.mini-stats {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 24px; position: relative; z-index: 1;
+}
+.mini-stat {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 14px; padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+    min-width: 150px;
+}
+.mini-stat .ms-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem; flex-shrink: 0;
+}
+.ms-total  .ms-icon { background:rgba(13,148,136,.15); color:#0d9488; border:1px solid rgba(13,148,136,.25); }
+.ms-active .ms-icon { background:rgba(16,185,129,.15);  color:#10b981; border:1px solid rgba(16,185,129,.25); }
+.ms-inact  .ms-icon { background:rgba(239,68,68,.15);   color:#ef4444; border:1px solid rgba(239,68,68,.25); }
+.ms-num { font-size: 1.3rem; font-weight: 800; color: #fff; line-height: 1; }
+.ms-lbl { font-size: .7rem; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .05em; }
+
+/* ── alerts ── */
+.dark-alert {
+    border-radius: 12px; padding: 13px 18px; font-size: .88rem;
+    display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+    position: relative; z-index: 1;
+}
+.dark-alert.success { background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25); color:#6ee7b7; }
+.dark-alert.danger  { background:rgba(239,68,68,.1);  border:1px solid rgba(239,68,68,.25);  color:#fca5a5; }
+
+/* ── main card ── */
+.main-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 24px; overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,.35);
+    position: relative; z-index: 1;
+}
+.main-card-header {
+    background: linear-gradient(135deg, rgba(13,148,136,.2) 0%, rgba(8,30,60,.5) 100%);
+    border-bottom: 1px solid rgba(13,148,136,.2);
+    padding: 18px 26px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+}
+.main-card-header .mch-left { display: flex; align-items: center; gap: 12px; }
+.main-card-header .mch-icon {
+    width: 38px; height: 38px; border-radius: 11px;
+    background: rgba(13,148,136,.2); border: 1.5px solid rgba(13,148,136,.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .95rem; color: #0d9488;
+}
+.main-card-header .mch-title { font-size: .97rem; font-weight: 700; color: #fff; }
+
+/* ── table ── */
+.dark-table { width: 100%; border-collapse: collapse; }
+.dark-table thead tr {
+    background: rgba(255,255,255,.04);
+    border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.dark-table thead th {
+    padding: 12px 18px;
+    font-size: .68rem; font-weight: 700;
+    color: rgba(255,255,255,.35);
+    text-transform: uppercase; letter-spacing: .07em;
+    white-space: nowrap;
+}
+.dark-table tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    transition: background .15s;
+}
+.dark-table tbody tr:hover { background: rgba(13,148,136,.05); }
+.dark-table tbody tr:last-child { border-bottom: none; }
+.dark-table td {
+    padding: 14px 18px;
+    color: rgba(255,255,255,.7);
+    font-size: .87rem; vertical-align: middle;
+}
+.dark-table td .main-text { color: #fff; font-weight: 600; }
+.dark-table td .sub-text  { color: rgba(255,255,255,.3); font-size: .77rem; margin-top: 1px; }
+
+/* ── avatar ── */
+.avatar-circle {
+    width: 38px; height: 38px; border-radius: 12px;
+    background: linear-gradient(135deg, rgba(13,148,136,.4), rgba(99,102,241,.4));
+    border: 1px solid rgba(13,148,136,.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem; font-weight: 800; color: #fff;
+    flex-shrink: 0;
+}
+
+/* ── badges ── */
+.sbadge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: .72rem; font-weight: 700; letter-spacing: .04em;
+    text-transform: uppercase; border-radius: 7px; padding: 3px 9px;
+}
+.sbadge::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; flex-shrink:0; }
+.sbadge.active   { background:rgba(16,185,129,.12); color:#10b981; border:1px solid rgba(16,185,129,.25); }
+.sbadge.inactive { background:rgba(239,68,68,.12);  color:#ef4444; border:1px solid rgba(239,68,68,.25); }
+
+/* ── code chip ── */
+.code-chip {
+    font-family: 'Courier New', monospace;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 7px; padding: 3px 9px;
+    font-size: .78rem; color: rgba(255,255,255,.6);
+    letter-spacing: .04em;
+}
+
+/* ── action buttons ── */
+.action-wrap { display: flex; gap: 6px; justify-content: flex-end; align-items: center; }
+.act-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    border-radius: 9px; padding: 6px 13px;
+    font-size: .78rem; font-weight: 600;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: background .15s, transform .1s;
+    white-space: nowrap;
+}
+.act-btn:hover { transform: translateY(-1px); }
+.act-btn.edit {
+    background: rgba(99,102,241,.12); color: #818cf8;
+    border: 1px solid rgba(99,102,241,.25);
+}
+.act-btn.edit:hover { background: rgba(99,102,241,.22); color: #a5b4fc; }
+.act-btn.inactivar {
+    background: rgba(239,68,68,.1); color: #ef4444;
+    border: 1px solid rgba(239,68,68,.2);
+}
+.act-btn.inactivar:hover { background: rgba(239,68,68,.2); color: #fca5a5; }
+.act-btn.activar {
+    background: rgba(16,185,129,.1); color: #10b981;
+    border: 1px solid rgba(16,185,129,.2);
+}
+.act-btn.activar:hover { background: rgba(16,185,129,.2); color: #6ee7b7; }
+
+/* ── register btn ── */
+.btn-primary-dark {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #0d9488; color: #fff;
+    border: none; border-radius: 12px;
+    padding: 10px 22px; font-size: .88rem; font-weight: 700;
+    cursor: pointer; transition: background .2s, transform .15s; text-decoration: none;
+}
+.btn-primary-dark:hover { background: #0f766e; color: #fff; transform: translateY(-1px); }
+
+/* ── back btn ── */
+.btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent; color: rgba(255,255,255,.5);
+    border: 1.5px solid rgba(255,255,255,.15); border-radius: 12px;
+    padding: 10px 20px; font-size: .88rem; font-weight: 600;
+    text-decoration: none; transition: border-color .2s, color .2s;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,.35); color: #fff; }
+
+/* ── empty ── */
+.empty-state {
+    padding: 70px 20px; text-align: center;
+}
+.empty-state .empty-icon {
+    width: 68px; height: 68px; border-radius: 20px;
+    background: rgba(13,148,136,.1); border: 1.5px solid rgba(13,148,136,.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.7rem; color: #0d9488; margin: 0 auto 18px;
+}
+.empty-state h3 { color: #fff; font-weight: 700; font-size: 1.1rem; margin-bottom: 6px; }
+.empty-state p  { color: rgba(255,255,255,.35); font-size: .87rem; margin: 0; }
+</style>
+
+<div class="page-wrap">
+    <div class="container" style="max-width: 1100px;">
+
+        <!-- Header -->
+        <div class="page-header" data-aos="fade-down">
             <div>
-                <h2 class="fw-bold">Gestión de Médicos</h2>
-                <p class="text-muted mb-0">Administra el personal médico de la clínica.</p>
+                <h1>Gestión de Médicos</h1>
+                <p>Administra el personal médico de la clínica</p>
             </div>
-            <a asp-action="Create" class="btn btn-primary rounded-pill px-4">Registrar Médico</a>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <a asp-controller="Home" asp-action="DashboardAdmin" class="btn-ghost">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+                <a asp-action="Create" class="btn-primary-dark">
+                    <i class="bi bi-person-plus"></i> Registrar Médico
+                </a>
+            </div>
         </div>
 
+        <!-- Alerts -->
         @if (TempData["MensajeExito"] != null)
         {
-            <div class="alert alert-success">@TempData["MensajeExito"]</div>
+            <div class="dark-alert success" data-aos="fade-down">
+                <i class="bi bi-check-circle-fill"></i> @TempData["MensajeExito"]
+            </div>
         }
-
         @if (TempData["MensajeError"] != null)
         {
-            <div class="alert alert-danger">@TempData["MensajeError"]</div>
+            <div class="dark-alert danger" data-aos="fade-down">
+                <i class="bi bi-exclamation-triangle-fill"></i> @TempData["MensajeError"]
+            </div>
         }
 
-        <div class="card shadow-sm border-0">
-            <div class="card-body">
-                @if (Model != null && Model.Any())
-                {
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light">
+        <!-- Mini stats -->
+        <div class="mini-stats" data-aos="fade-up" data-aos-delay="50">
+            <div class="mini-stat ms-total">
+                <div class="ms-icon"><i class="bi bi-heart-pulse"></i></div>
+                <div><div class="ms-num">@total</div><div class="ms-lbl">Total</div></div>
+            </div>
+            <div class="mini-stat ms-active">
+                <div class="ms-icon"><i class="bi bi-person-check"></i></div>
+                <div><div class="ms-num">@activos</div><div class="ms-lbl">Activos</div></div>
+            </div>
+            <div class="mini-stat ms-inact">
+                <div class="ms-icon"><i class="bi bi-person-x"></i></div>
+                <div><div class="ms-num">@inactivos</div><div class="ms-lbl">Inactivos</div></div>
+            </div>
+        </div>
+
+        <!-- Table card -->
+        <div class="main-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="main-card-header">
+                <div class="mch-left">
+                    <div class="mch-icon"><i class="bi bi-heart-pulse"></i></div>
+                    <span class="mch-title">Personal médico</span>
+                </div>
+                <span style="color:rgba(255,255,255,.3); font-size:.8rem;">@total registro@(total != 1 ? "s" : "")</span>
+            </div>
+
+            @if (Model == null || !Model.Any())
+            {
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="bi bi-heart-pulse"></i></div>
+                    <h3>Sin médicos registrados</h3>
+                    <p>Aún no hay personal médico en el sistema.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="dark-table">
+                        <thead>
+                            <tr>
+                                <th>Médico</th>
+                                <th>Correo institucional</th>
+                                <th>Especialidad</th>
+                                <th>Código profesional</th>
+                                <th>Estado</th>
+                                <th style="text-align:right; padding-right:22px;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var medico in Model)
+                            {
                                 <tr>
-                                    <th>Nombre</th>
-                                    <th>Correo institucional</th>
-                                    <th>Especialidad</th>
-                                    <th>Código profesional</th>
-                                    <th>Estado</th>
-                                    <th class="text-end">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var medico in Model)
-                                {
-                                    <tr>
-                                        <td>@medico.Nombre @medico.Apellido</td>
-                                        <td>@medico.Correo</td>
-                                        <td>@medico.Especialidad</td>
-                                        <td>@medico.CodigoProfesional</td>
-                                        <td>
-                                            <span class="badge @(medico.Estado ? "bg-success" : "bg-secondary")">
-                                                @(medico.Estado ? "Activo" : "Inactivo")
-                                            </span>
-                                        </td>
-                                        <td class="text-end">
-                                            <a asp-action="Edit" asp-route-id="@medico.IdMedico" class="btn btn-sm btn-outline-primary rounded-pill">
-                                                Editar
+                                    <td>
+                                        <div style="display:flex; align-items:center; gap:12px;">
+                                            <div class="avatar-circle">@medico.Nombre.Substring(0,1).ToUpper()</div>
+                                            <span class="main-text">@medico.Nombre @medico.Apellido</span>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div style="display:flex; align-items:center; gap:6px;">
+                                            <i class="bi bi-envelope" style="color:rgba(255,255,255,.25);"></i>
+                                            @medico.Correo
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div style="display:flex; align-items:center; gap:6px;">
+                                            <i class="bi bi-heart-pulse" style="color:rgba(239,68,68,.4);"></i>
+                                            @medico.Especialidad
+                                        </div>
+                                    </td>
+
+                                    <td><span class="code-chip">@medico.CodigoProfesional</span></td>
+
+                                    <td>
+                                        @if (medico.Estado)
+                                        { <span class="sbadge active">Activo</span> }
+                                        else
+                                        { <span class="sbadge inactive">Inactivo</span> }
+                                    </td>
+
+                                    <td style="padding-right:22px;">
+                                        <div class="action-wrap">
+                                            <a asp-action="Edit" asp-route-id="@medico.IdMedico" class="act-btn edit">
+                                                <i class="bi bi-pencil"></i> Editar
                                             </a>
 
                                             @if (medico.Estado)
@@ -63,8 +334,8 @@
                                                 <form asp-action="Inactivar" method="post" class="d-inline">
                                                     @Html.AntiForgeryToken()
                                                     <input type="hidden" name="idMedico" value="@medico.IdMedico" />
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">
-                                                        Inactivar
+                                                    <button type="submit" class="act-btn inactivar">
+                                                        <i class="bi bi-person-dash"></i> Inactivar
                                                     </button>
                                                 </form>
                                             }
@@ -73,25 +344,20 @@
                                                 <form asp-action="Activar" method="post" class="d-inline">
                                                     @Html.AntiForgeryToken()
                                                     <input type="hidden" name="idMedico" value="@medico.IdMedico" />
-                                                    <button type="submit" class="btn btn-sm btn-outline-success rounded-pill">
-                                                        Activar
+                                                    <button type="submit" class="act-btn activar">
+                                                        <i class="bi bi-person-check"></i> Activar
                                                     </button>
                                                 </form>
                                             }
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                }
-                else
-                {
-                    <div class="text-center text-muted py-4">
-                        No hay médicos registrados.
-                    </div>
-                }
-            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
         </div>
+
     </div>
-</section>
+</div>
